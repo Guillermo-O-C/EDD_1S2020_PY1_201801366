@@ -82,9 +82,6 @@ string PrintW(MatrizDispersa<string> *ma){
 	int ENodes=0;
 	string content ="digraph G { \n node[shape=box]\n ";
 	string nivelador;
-	string LastPosition;
-	int Xcolumns=0;
-	int YRows=0;
 	string rankedLevel;
 	Nodo<string> *auxiliar = ma->getRoot();    
 	while(auxiliar!=NULL){
@@ -105,7 +102,6 @@ string PrintW(MatrizDispersa<string> *ma){
 				content+=" root -> Y"+to_string(temp->getDown()->getY());
 				content+="\n";				
             }else if(temp->getY()==-1){//cabeza columnas
-				Xcolumns++;
 				//content+= "pinting column head\n";
 				rankedLevel+=";X"+to_string(temp->getX());
 				nivelador+="X"+to_string(temp->getX())+"[group="+to_string(temp->getX()+1)+"];\n";
@@ -127,19 +123,17 @@ string PrintW(MatrizDispersa<string> *ma){
 				}
 				//imprimir abajo	
 				if(temp->getDown()!=NULL){
-					content+="X"+to_string(temp->getX())+" -> F"+to_string(temp->getDown()->getX())+"C"+to_string(temp->getDown()->getY());
+					content+="X"+to_string(temp->getX())+" -> C"+to_string(temp->getDown()->getX())+"F"+to_string(temp->getDown()->getY());
 					content+="\n";
 				}
             }else if(temp->getX()==-1){//cabeza filas
-				YRows++;
-				ENodes++;
 				rankedLevel+="Y"+to_string(temp->getY());
 				nivelador+="Y"+to_string(temp->getY())+"[group=1];\n";
 				//content+= "pinting row head\n";
              //  cout<< temp->getY() <<"\n" ;
                 //imprimir derecha
 				if(temp->getNext()!=NULL){
-					content+="Y"+to_string(temp->getY())+" -> F"+ to_string(temp->getNext()->getX())+"C"+to_string(temp->getNext()->getX());
+					content+="Y"+to_string(temp->getY())+" -> C"+ to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
 					content+="\n";
 				}
 			    //imprimir arriba	
@@ -158,39 +152,39 @@ string PrintW(MatrizDispersa<string> *ma){
 					content+="\n";
 				}	
             }else {//contenido de la matriz
-				LastPosition="F"+to_string(temp->getX())+"C"+to_string(temp->getY());
-				rankedLevel+=";F"+to_string(temp->getX())+"C"+to_string(temp->getY());
-				nivelador+="F"+to_string(temp->getX())+"C"+to_string(temp->getY())+"[group="+to_string(temp->getX()+1)+"];\n";
+				rankedLevel+=";C"+to_string(temp->getX())+"F"+to_string(temp->getY());
+				nivelador+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+"[group="+to_string(temp->getX()+1)+"];\n";
 				//cout<<"contiene "+ temp->getValue()+"en ("<<to_string(temp->getX())+","+to_string(temp->getY())<<")";
              //  cout<< temp->getValue() <<" ";
 			    //imprimir izquierda
 				if(temp->getPrevious()!=NULL){
 					if(temp->getPrevious()->getX()==-1){
-						content+="F"+to_string(temp->getX())+"C"+to_string(temp->getY())+" -> Y"+to_string(temp->getPrevious()->getY());
+					//	content+="/*Izq de nodo cont*/"+to_string(temp->getPrevious()->getX())+","+to_string(temp->getPrevious()->getY());
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> Y"+to_string(temp->getPrevious()->getY());
 						content+="\n";
 					}else{
-						content+="F"+to_string(temp->getX())+"C"+to_string(temp->getY())+" -> F"+to_string(temp->getPrevious()->getX())+"C"+to_string(temp->getPrevious()->getY());
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getPrevious()->getX())+"F"+to_string(temp->getPrevious()->getY());
 						content+="\n";
 					}
 				}
                 //imprimir derecha 
 				if(temp->getNext()!=NULL){
-					content+="F"+to_string(temp->getX())+"C"+to_string(temp->getY())+" -> F"+to_string(temp->getNext()->getX())+"C"+to_string(temp->getNext()->getY());
+					content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
 					content+="\n";
 				}
 			    //imprimir arriba
 				if(temp->getUp()!=NULL){
 					if(temp->getUp()->getY()==-1){
-						content+="F"+to_string(temp->getX())+"C"+to_string(temp->getY())+" -> X"+to_string(temp->getUp()->getX());
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> X"+to_string(temp->getUp()->getX());
 						content+="\n";
 					}else{
-						content+="F"+to_string(temp->getX())+"C"+to_string(temp->getY())+" -> F"+to_string(temp->getUp()->getX())+"C"+to_string(temp->getUp()->getY());
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getUp()->getX())+"F"+to_string(temp->getUp()->getY());
 						content+="\n";
 					}
 				}
 				//imprimir abajo
 				if(temp->getDown()!=NULL){
-					content+="F"+to_string(temp->getX())+"C"+to_string(temp->getY())+" -> F"+to_string(temp->getDown()->getX())+"C"+to_string(temp->getDown()->getY());
+					content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getDown()->getX())+"F"+to_string(temp->getDown()->getY());
 					content+="\n";
 				}
             }            
@@ -221,8 +215,11 @@ string PrintW(MatrizDispersa<string> *ma){
 int main(int argc, char ** argv)
 {
     MatrizDispersa<string> *matriz = new MatrizDispersa<string>("putas");
+	matriz->Insertar("buenas", 0, 3);
+	matriz->Insertar("buenas", 0, 2);
+	matriz->Insertar("buenas", 1, 2);
+	matriz->Insertar("buenas", 4, 2);
 	matriz->Insertar("buenas", 0, 0);
-	matriz->Insertar("noches", 0, 1);
 	//cout<<PrintW(matriz);
 	matriz->ImprimirMatriz();
 	ofstream graphFile;

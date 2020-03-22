@@ -41,10 +41,12 @@ Nodo<T> *MatrizDispersa<T>::BuscarEnY(int y)
     {
         if (auxiliar->getY() == y)
         {
+            cout<<"Sí existe la Fila"<<to_string(y)<<"\n";
             return auxiliar;
         }
         auxiliar = auxiliar->getDown();
     }
+    cout<<"No existe la Fila"<<to_string(y)<<"\n";
     return NULL;
 }
 template <class T>
@@ -55,10 +57,12 @@ Nodo<T> *MatrizDispersa<T>::BuscarEnX(int x)
     {
         if (auxiliar->getX() == x)
         {
+            cout<<"Sí existe la columna"<<to_string(x)<<"\n";
             return auxiliar;
         }
         auxiliar = auxiliar->getNext();
     }
+    cout<<"No existe la columna"<<to_string(x)<<"\n";
     return NULL;
 }
 template <class T>
@@ -98,9 +102,11 @@ Nodo<T> *MatrizDispersa<T>::InsertarOrdenadoColumna(Nodo<T> *nuevo, Nodo<T> *cab
         aux->getPrevious()->setNext(nuevo);
         nuevo->setPrevious(aux->getPrevious());
         aux->setPrevious(nuevo);
+        cout<<"nueva X"<<to_string(nuevo->getX())<<"\n";
     }
     else
     {
+        cout<<"nueva X"<<to_string(nuevo->getX())<<"\n";
         aux->setNext(nuevo);
         nuevo->setPrevious(aux);
     }
@@ -109,24 +115,24 @@ Nodo<T> *MatrizDispersa<T>::InsertarOrdenadoColumna(Nodo<T> *nuevo, Nodo<T> *cab
 template <class T>
 Nodo<T> *MatrizDispersa<T>::InsertarOrdenadoFila(Nodo<T> *nuevo, Nodo<T> *cabezaFila)
 {
-    this->auxiliar = cabezaFila;
+    Nodo<T> *aux = cabezaFila;
     bool bandera = false;
     while (true)
     {
-        if (auxiliar->getY() == nuevo->getY())
+        if (aux->getY() == nuevo->getY())
         {
-            auxiliar->setX(nuevo->getX());
-            auxiliar->setValue(nuevo->getValue());
-            return auxiliar;
+            aux->setX(nuevo->getX());
+            aux->setValue(nuevo->getValue());
+            return aux;
         }
-        else if (auxiliar->getY() > nuevo->getY())
+        else if (aux->getY() > nuevo->getY())
         {
             bandera = true;
             break;
         }
-        if (auxiliar->getDown() != NULL)
+        if (aux->getDown() != NULL)
         {
-            auxiliar = auxiliar->getDown();
+            aux = aux->getDown();
         }
         else
         {
@@ -135,15 +141,17 @@ Nodo<T> *MatrizDispersa<T>::InsertarOrdenadoFila(Nodo<T> *nuevo, Nodo<T> *cabeza
     }
     if (bandera)
     {
-        nuevo->setDown(auxiliar);
-        auxiliar->getUp()->setDown(nuevo);
-        nuevo->setUp(auxiliar->getUp());
-        auxiliar->setUp(nuevo);
+        nuevo->setDown(aux);
+        aux->getUp()->setDown(nuevo);
+        nuevo->setUp(aux->getUp());
+        aux->setUp(nuevo);
+        cout<<"nueva Y"<<to_string(nuevo->getY())<<"\n";
     }
     else
     {
-        auxiliar->setDown(nuevo);
-        nuevo->setUp(auxiliar);
+        cout<<"nueva Y"<<to_string(nuevo->getY())<<"\n";
+        aux->setDown(nuevo);
+        nuevo->setUp(aux);
     }
     return nuevo;
 }
@@ -152,6 +160,7 @@ Nodo<T>* MatrizDispersa<T>::CrearColumna(int x)
 {
     Nodo<T> *nuevo = new Nodo<T>(this->NoValue, x, -1);
     Nodo<T> *Columna = InsertarOrdenadoColumna(nuevo, this->raiz);
+    cout<<Columna->getX()<<","<<Columna->getY()<<"\n";
     return Columna;
 }
 template <class T>
@@ -159,6 +168,7 @@ Nodo<T>* MatrizDispersa<T>::CrearFila(int y)
 {
     Nodo<T> *nuevo = new Nodo<T>(this->NoValue, -1, y);
     Nodo<T> *Fila = InsertarOrdenadoFila(nuevo, this->raiz);
+    cout<<Fila->getX()<<","<<Fila->getY()<<"\n";
     return Fila;
 }
 template <class T>
@@ -166,8 +176,8 @@ void MatrizDispersa<T>::Insertar(T Value, int x, int y)
 {
     Nodo<T> *nuevo = new Nodo<T>(Value, x, y);
     Nodo<T> *NodoColumna, *NodoFila;
-    NodoFila = BuscarEnX(x);
-    NodoColumna = BuscarEnY(y);
+    NodoFila = BuscarEnY(y);
+    NodoColumna = BuscarEnX(x);
     //Columna y Fila no existen
     if (NodoColumna == NULL && NodoFila == NULL)
     {
