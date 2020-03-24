@@ -3,6 +3,8 @@
 #include "EDD/ListaSimple_t.h"
 #include "EDD/Pila_t.h"
 #include "EDD/MatrizDispersa_t.h"
+#include "EDD/ABB_t.h"
+#include "jugadores.h"
 #include <fstream>
 
 string ImprimirMatriz(MatrizDispersa<string> *matriz){
@@ -79,7 +81,6 @@ string ImprimirMatriz(MatrizDispersa<string> *matriz){
 	return content;
 }
 string PrintW(MatrizDispersa<string> *ma){
-	int ENodes=0;
 	string content ="digraph G { \n node[shape=box]\n ";
 	string nivelador;
 	string rankedLevel;
@@ -214,6 +215,7 @@ string PrintW(MatrizDispersa<string> *ma){
 }
 int main(int argc, char ** argv)
 {
+	/*
     MatrizDispersa<string> *matriz = new MatrizDispersa<string>("putas");
 	matriz->Insertar("buenas", 0, 3);
 	matriz->Insertar("buenas", 0, 2);
@@ -229,5 +231,22 @@ int main(int argc, char ** argv)
     graphFile.close();
     std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
     system(filePath.c_str());
+	ABB *arbol = new ABB();
+	arbol->Insertar("Maria");
+	arbol->Insertar("Alex");
+	arbol->Insertar("Pamela");
+	arbol->Insertar("Lucia");
+	arbol->Insertar("Gabriela");
+	arbol->Insertar("Karla");
+	arbol->Imprimir(1);
+	*/
+		ABB *arbol = new ABB();
+	while(true){
+		string nombre;
+		cin>>nombre;
+		arbol->Insertar(nombre);
+		arbol->Imprimir();
+		cout<<arbol->GetSize();
+	}
 	return 0;
 }
