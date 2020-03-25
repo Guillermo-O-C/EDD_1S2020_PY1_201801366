@@ -4,12 +4,12 @@
 using namespace std;
 
 template <class T>
-class ListaDoble{
+class ListaDobleCircular{
 	private:
 		Nodo<T> *cabeza;
 		int size;
 	public:
-		ListaDoble(){
+		ListaDobleCircular(){
 			this->cabeza = NULL;
 			this->size=0;
 		}
@@ -27,12 +27,12 @@ class ListaDoble{
 		void InsertarInicio(T value);
 };
 template <class T>
-void ListaDoble<T>:: Insertar(T value){
+void ListaDobleCircular<T>:: Insertar(T value){
             Nodo<T> *nuevo = new Nodo<T>(value);
 			if(cabeza==NULL){
 				this->cabeza = nuevo;
 				this->cabeza->setNext(cabeza);
-				this->cabeza->setPrevious(cebaza);
+				this->cabeza->setPrevious(cabeza);
 				size++;
 			}else{
 				Nodo<T> *aux= this->cabeza;
@@ -48,7 +48,7 @@ void ListaDoble<T>:: Insertar(T value){
 
 		}
 template <class T>
-void ListaDoble<T>:: InsertarInicio(T value){
+void ListaDobleCircular<T>:: InsertarInicio(T value){
             Nodo<T> *nuevo = new Nodo<T>(value);
 			if(!Empty()){
 				nuevo->setNext(cabeza);
@@ -60,7 +60,7 @@ void ListaDoble<T>:: InsertarInicio(T value){
 		}
 
 template <class T>
-void ListaDoble<T>:: DeleteFirst(){
+void ListaDobleCircular<T>:: DeleteFirst(){
 			if(!Empty()){
                 cabeza->getPrevious()->setNext(cabeza->getNext());
                 cabeza->getNext()->setPrevious(cabeza->getPrevious());
@@ -69,15 +69,15 @@ void ListaDoble<T>:: DeleteFirst(){
 		}
 
 template <class T>
-int ListaDoble<T>:: GetSize(){
+int ListaDobleCircular<T>:: GetSize(){
 	return size;
 }
 template <class T>
-Nodo<T>* ListaDoble<T>:: GetCabeza(){
+Nodo<T>* ListaDobleCircular<T>:: GetCabeza(){
 	return cabeza;
 }
 template <class T>
-bool ListaDoble<T>:: Empty(){
+bool ListaDobleCircular<T>:: Empty(){
 	if(size==0){
 		return true;
 	}
@@ -85,7 +85,7 @@ bool ListaDoble<T>:: Empty(){
 }
 
 template <class T>
-void ListaDoble<T>:: Imprimir(){
+void ListaDobleCircular<T>:: Imprimir(){
 				Nodo<T> *aux;
 				aux = this->cabeza;
 				if(Empty()){
@@ -101,7 +101,7 @@ void ListaDoble<T>:: Imprimir(){
 		}
 
 template <class T>
-void ListaDoble<T>:: InsertAfter(Nodo<T> lugar, Nodo<T> nuevo){
+void ListaDobleCircular<T>:: InsertAfter(Nodo<T> lugar, Nodo<T> nuevo){
 Nodo<T> *aux = this->cabeza;
 	if(!Empty()){
 		for(int i =0; i<size;i++){
@@ -121,7 +121,7 @@ Nodo<T> *aux = this->cabeza;
 }
 
 template <class T>
-int ListaDoble<T>:: Buscar(T objeto){
+int ListaDobleCircular<T>:: Buscar(T objeto){
 	Nodo<T> *aux = this->cabeza;
 	for(int i = 0; i<size;i++){
 		if(aux->getValue() == objeto){
@@ -133,7 +133,7 @@ int ListaDoble<T>:: Buscar(T objeto){
 }
 
 template <class T>
-void ListaDoble<T>::DeleteLast(){
+void ListaDobleCircular<T>::DeleteLast(){
     if(!Empty()){
         if(cabeza->getNext()==cabeza){
             cabeza=NULL;
@@ -155,14 +155,14 @@ void ListaDoble<T>::DeleteLast(){
 }
 
 template <class T>
-void ListaDoble<T>::SetCabeza(Nodo<T> *nuevo){
+void ListaDobleCircular<T>::SetCabeza(Nodo<T> *nuevo){
     Nodo<T> *aux = cabeza->getNext();
     nuevo->setNext(aux);
     cabeza =nuevo;
 }
 
 template <class T>
-Nodo<T>* ListaDoble<T>::GetLast(){
+Nodo<T>* ListaDobleCircular<T>::GetLast(){
     if(!Empty()){
         return cabeza->getPrevious();
     }else{

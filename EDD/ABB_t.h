@@ -18,7 +18,7 @@ class ABB{
 			this->raiz = NULL;
 			this->aux = NULL;
 		}
-		void Insertar(string value);
+		bool Insertar(string value);
 		Nodo<jugadores>* GetRoot();
 		void Imprimir();
 		int GetSize();
@@ -26,13 +26,13 @@ class ABB{
         string PrintTree(Nodo<jugadores> *Central);
 		//int Buscar(T objeto);
 };
-void ABB:: Insertar(string value){
+bool ABB:: Insertar(string value){
             Nodo<jugadores> *nuevo = new Nodo<jugadores>(value);
             jugadores jugador(value);
             jugador.setID(size);
             nuevo->setValue(jugador);
-            cout<<"size is "<<size<<"\n";
-            cout<<"el ID del nuevo "<<nuevo->getValue().getName()<<" nodo es "<<nuevo->getValue().getID()<<"\n";
+            //cout<<"size is "<<size<<"\n";
+            //cout<<"el ID del nuevo "<<nuevo->getValue().getName()<<" nodo es "<<nuevo->getValue().getID()<<"\n";
 			if(raiz==NULL){
 				this->raiz = nuevo;
 				this->raiz->setNext(NULL);
@@ -44,7 +44,8 @@ void ABB:: Insertar(string value){
                     if(aux->getValue().getName() < nuevo->getValue().getName()){
                         if(aux->getNext()==NULL){
                             aux->setNext(nuevo);
-                            break;
+				            size++;
+                            return true;
                         }else{
                             aux=aux->getNext();
                         }
@@ -52,17 +53,16 @@ void ABB:: Insertar(string value){
                     if(aux->getValue().getName() > nuevo->getValue().getName()){
                         if(aux->getPrevious()==NULL){
                             aux->setPrevious(nuevo);
-                            break;
+				            size++;
+                            return true;
                         }else{
                             aux=aux->getPrevious();
                         }
                     }else if(aux->getValue().getName() == nuevo->getValue().getName()){
                         //valor repetido
-                        size--;
-                        break;
+                        return false;
                     }
                 }
-				size++;
 			}
 
 		}
