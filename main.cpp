@@ -21,11 +21,12 @@ using json = nlohmann::json;
 //Estrucutras y Variables Globales
 ABB *arbol =  new ABB();
 ListaSimple<Casillas> *casillasEspeciales = new ListaSimple<Casillas>();
+ListaSimple<jugadores> *JugadoresOrdenados;
 ListaDobleCircular<string> *diccionario = new ListaDobleCircular<string>();
 Cola<Ficha> *Bolsa = new Cola<Ficha>();
 int DimensionTablero;
-
-//Métodos del juego
+jugadores jugador1, jugador2;
+//Métodos de acceso a EDD
 string ImprimirMatriz(MatrizDispersa<string> *matriz){
 	string content ="digraph G { \n splines = polyline;\n node[shape=record]\n ";
 	Nodo<string> *auxiliar = matriz->getRoot();
@@ -98,7 +99,7 @@ string ImprimirMatriz(MatrizDispersa<string> *matriz){
         auxiliar = auxiliar->getDown();
     }
 	return content;
-}
+	}
 string PrintW(MatrizDispersa<string> *ma){
 	string content ="digraph G { \n node[shape=box]\n ";
 	string nivelador;
@@ -231,207 +232,165 @@ string PrintW(MatrizDispersa<string> *ma){
 	YLeveler+="[dir=none];";
 	*/
 	return content+"\n}";
-}
-void RevolverCola(){
-	for(int i =0;i<200;i++){
-		Nodo<Ficha> *salida = Bolsa->Desencolar();
-		std::random_device dev;
-		std::mt19937 rng(dev());
-		std::uniform_int_distribution<std::mt19937::result_type> dist6(0,Bolsa->GetSize()-1);
-		Bolsa->InsertAt(salida->getValue(), dist6(rng));
 	}
-	
-}
+void RecorrerArbol(Nodo<jugadores> *Central, ListaSimple<jugadores> *lista){
+		if (Central->getPrevious() != NULL)//Left
+        {          
+            RecorrerArbol(Central->getPrevious(), lista); 
+        }
+        lista->Insertar(Central->getValue());   
+        if (Central->getNext() != NULL)//Right
+        {
+            RecorrerArbol(Central->getNext(), lista);
+        }
+	} 
+void PrintPlayers(){
+	 JugadoresOrdenados = new ListaSimple<jugadores>();
+	 RecorrerArbol(arbol->GetRoot(), JugadoresOrdenados);
+	 for(int i=0;i<JugadoresOrdenados->GetSize();i++){
+		 cout<<to_string(i)<<". "<< JugadoresOrdenados->ElementAt(i)->getValue().getName()<<endl;
+	 }
+	}
+
+//Métodos del juego
+void Jugar(){
+
+	}
+void EscogerJugadores(){
+    system("clear");
+	PrintPlayers();
+	cout<<"Escoge el jugador 1"<<endl;
+	int player1, player2;
+	cin>>player1;
+	cout<<"Escoge el jugador 2"<<endl;
+	cin>>player2;
+	if(player1==player2){
+		cout<<"No puedes escoger 2 veces al mismo jugador";
+	}else{
+		jugador1=JugadoresOrdenados->ElementAt(player1)->getValue();
+		jugador2=JugadoresOrdenados->ElementAt(player2)->getValue();
+		cout<<"jugador1: "<<jugador1.getName()<<" jugador2: "<<jugador2.getName()<<endl;
+		Jugar();
+	}
+	}
 void LlenarCola(){
 	Bolsa->Vaciar();
+	ListaSimple<Ficha> *TemporalBag = new ListaSimple<Ficha>();
 	int FichasTotales =95;
 	int A,B,C,D,E,F,G,H,I,J,K,L,M,N,Enie,O,P,Q,R,S,T,U,V,W,X,Y,Z;
 	A=12;B=2;C=4;D=5;E=12;F=1;G=2;H=2;I=6;J=1;L=4;M=2;N=5;Enie=1;O=9;P=2;Q=1;R=5;S=6;T=4;U=5;V=1;X=1;Y=1;Z=1;
-	while(FichasTotales>0){
-	std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> dist6(1,25); // distribution in range [1, 6]
-		//int azar = rand() % 25 + 1;
-		int azar = dist6(rng);
-		switch(azar){
-			case 1:
+	srand((unsigned) time(0));
+	int azar;
+	for(int i =0; i<95;i++){	
 			if(A>0){
-				Bolsa->Encolar(Ficha("A", 1));
+				TemporalBag->Insertar(Ficha("A", 1));
 				A--;
 				FichasTotales--;
-			}
-				break;
-			case 2:
-			if(B>0){
-				Bolsa->Encolar(Ficha("B", 3));
+			}else if(B>0){
+				TemporalBag->Insertar(Ficha("B", 3));
 				B--;
 				FichasTotales--;
-			}
-				break;
-			case 3:
-			if(C>0){
-				Bolsa->Encolar(Ficha("C", 3));
+			}else if(C>0){
+				TemporalBag->Insertar(Ficha("C", 3));
 				C--;
 				FichasTotales--;
-			}
-				break;
-			case 4:
-			if(D>0){
-				Bolsa->Encolar(Ficha("D", 1));
+			}else if(D>0){
+				TemporalBag->Insertar(Ficha("D", 1));
 				D--;
 				FichasTotales--;
-			}
-				break;
-			case 5:
-			if(E>0){
-				Bolsa->Encolar(Ficha("E", 1));
+			}else if(E>0){
+				TemporalBag->Insertar(Ficha("E", 1));
 				E--;
 				FichasTotales--;
-			}
-				break;
-			case 6:
-			if(F>0){
-				Bolsa->Encolar(Ficha("F", 4));
+			}else if(F>0){
+				TemporalBag->Insertar(Ficha("F", 4));
 				F--;
 				FichasTotales--;
-			}
-				break;
-			case 7:
-			if(G>0){
-				Bolsa->Encolar(Ficha("G", 2));
+			}else if(G>0){
+				TemporalBag->Insertar(Ficha("G", 2));
 				G--;
 				FichasTotales--;
-			}
-				break;
-			case 8:
-			if(H>0){
-				Bolsa->Encolar(Ficha("H", 4));
+			}else if(H>0){
+				TemporalBag->Insertar(Ficha("H", 4));
 				H--;
 				FichasTotales--;
-			}
-				break;
-			case 9:
-			if(I>0){
-				Bolsa->Encolar(Ficha("I", 1));
+			}else if(I>0){
+				TemporalBag->Insertar(Ficha("I", 1));
 				I--;
 				FichasTotales--;
-			}
-				break;
-			case 10:
-			if(J>0){
-				Bolsa->Encolar(Ficha("J", 8));
+			}else if(J>0){
+				TemporalBag->Insertar(Ficha("J", 8));
 				J--;
 				FichasTotales--;
-			}
-				break;
-			case 11:
-			if(L>0){
-				Bolsa->Encolar(Ficha("L", 1));
+			}else if(L>0){
+				TemporalBag->Insertar(Ficha("L", 1));
 				L--;
 				FichasTotales--;
-			}
-				break;
-			case 12:
-			if(M>0){
-				Bolsa->Encolar(Ficha("M", 3));
+			}else if(M>0){
+				TemporalBag->Insertar(Ficha("M", 3));
 				M--;
 				FichasTotales--;
-			}
-				break;
-			case 13:
-			if(N>0){
-				Bolsa->Encolar(Ficha("N", 1));
+			}else if(N>0){
+				TemporalBag->Insertar(Ficha("N", 1));
 				N--;
 				FichasTotales--;
-			}
-				break;
-			case 14:
-			if(Enie>0){
-				Bolsa->Encolar(Ficha("Ñ", 8));
+			}else if(Enie>0){
+				TemporalBag->Insertar(Ficha("Ñ", 8));
 				Enie--;
 				FichasTotales--;
-			}
-				break;
-			case 15:
-			if(O>0){
-				Bolsa->Encolar(Ficha("O", 1));
+			}else if(O>0){
+				TemporalBag->Insertar(Ficha("O", 1));
 				O--;
-				FichasTotales--;
-			}
-				break;
-			case 16:
-			if(P>0){
-				Bolsa->Encolar(Ficha("P", 3));
+			}else if(P>0){
+				TemporalBag->Insertar(Ficha("P", 3));
 				P--;
 				FichasTotales--;
-			}
-				break;
-			case 17:
-			if(Q>0){
-				Bolsa->Encolar(Ficha("Q", 5));
+			}else if(Q>0){
+				TemporalBag->Insertar(Ficha("Q", 5));
 				Q--;
 				FichasTotales--;
-			}
-				break;
-			case 18:
-			if(R>0){
-				Bolsa->Encolar(Ficha("R", 1));
+			}else if(R>0){
+				TemporalBag->Insertar(Ficha("R", 1));
 				R--;
 				FichasTotales--;
-			}
-				break;
-			case 19:
-			if(S>0){
-				Bolsa->Encolar(Ficha("S", 1));
+			}else if(S>0){
+				TemporalBag->Insertar(Ficha("S", 1));
 				S--;
 				FichasTotales--;
-			}
-				break;
-			case 20:
-			if(T>0){
-				Bolsa->Encolar(Ficha("T", 1));
+			}else if(T>0){
+				TemporalBag->Insertar(Ficha("T", 1));
 				T--;
 				FichasTotales--;
-			}
-				break;
-			case 21:
-			if(U>0){
-				Bolsa->Encolar(Ficha("U", 1));
+			}else if(U>0){
+				TemporalBag->Insertar(Ficha("U", 1));
 				U--;
 				FichasTotales--;
-			}
-				break;
-			case 22:
-			if(V>0){
-				Bolsa->Encolar(Ficha("V", 4));
+			}else if(V>0){
+				TemporalBag->Insertar(Ficha("V", 4));
 				V--;
 				FichasTotales--;
-			}
-				break;
-			case 23:
-			if(X>0){
-				Bolsa->Encolar(Ficha("X", 8));
+			}else if(X>0){
+				TemporalBag->Insertar(Ficha("X", 8));
 				X--;
 				FichasTotales--;
-			}
-				break;
-			case 24:
-			if(Y>0){
-				Bolsa->Encolar(Ficha("Y", 4));
+			}else if(Y>0){
+				TemporalBag->Insertar(Ficha("Y", 4));
 				Y--;
 				FichasTotales--;
-			}
-				break;
-			case 25:
-			if(Z>0){
-				Bolsa->Encolar(Ficha("Z", 10));
+			}else if(Z>0){
+				TemporalBag->Insertar(Ficha("Z", 10));
 				Z--;
 				FichasTotales--;
 			}
-				break;
 		}
+	for(int i =0;i<95;i++){
+		srand((unsigned) time(0));
+		int azar;
+		azar= rand() % TemporalBag->GetSize();
+		Nodo<Ficha> *TemporalFicha =  TemporalBag->SacarElemento(azar);
+		Bolsa->Encolar(TemporalFicha->getValue());
 	}
-}
+	}
 void CargarArchivo(){
 	string nombre;
 	cin>>nombre;
@@ -462,7 +421,7 @@ void CargarArchivo(){
 		cout << to_string(aux->getValue().getX()) <<","<<to_string(aux->getValue().getY())<<endl;
 		aux=aux->getNext();
 	}
-}
+	}
 void CrearJugador(){
 	string nombre;
 	cout<<"Ingresa el nombre del  nuevo jugador: ";
@@ -474,31 +433,16 @@ void CrearJugador(){
 		cout<<"El jugador ya existe\n";
 	}
 	char c = getch();	
-}
+	}
 void Menu(){
-	cout <<"\nBienvenido a Screabble\n"<<endl<<"Escoje la opción que deseas ejecutar:\n1.Jugar\n2.Crear Jugador\n3.Cargar Archivo\n";
+	cout <<"\nBienvenido a Scrabble++\n"<<endl<<"Escoje la opción que deseas ejecutar:\n1.Jugar\n2.Crear Jugador\n3.Cargar Archivo\n";
 	int opcion;
 	cin>>opcion;
 	switch (opcion)
 	{
 	case 1:
-	cout<<"Llenando cola"<<endl;
 		LlenarCola();
-		Nodo<Ficha> *aux;
-		aux = Bolsa->ReturnTop();
-		while(aux!=NULL){
-				cout<<aux->getValue().getChar();
-			aux=aux->getNext();
-		}
-		/*
-	cout<<"\nRevolviendo Cola"<<endl;
-		RevolverCola();
-		aux = Bolsa->ReturnTop();
-		while(aux!=NULL){
-				cout<<aux->getValue().getChar();
-			aux=aux->getNext();
-		}
-		*/
+		EscogerJugadores();
 		Menu();
 		break;
 	case 2:
@@ -516,12 +460,12 @@ void Menu(){
 		Menu();
 		break;
 	}	
-}
+	}
 
 
 
 int main(int argc, char ** argv)
-{
+	{
 	/*
     MatrizDispersa<string> *matriz = new MatrizDispersa<string>("putas");
 	matriz->Insertar("buenas", 0, 3);
@@ -555,10 +499,10 @@ int main(int argc, char ** argv)
 		arbol->Imprimir();
 		cout<<arbol->GetSize();
 	}
-*/
-	Menu();
+	*/
+		Menu();
 
-return 0;
-}
+	return 0;
+	}
 
 

@@ -17,6 +17,9 @@ class ListaSimple{
 		Nodo<T>* GetCabeza();
 		bool Empty();
 		void DeleteLast();
+		Nodo<T>* SacarElemento(int posiscion);
+		Nodo<T>* ElementAt(int posiscion);
+		void Vaciar();
 };
 template <class T>
 void ListaSimple<T>:: Insertar(T value){
@@ -45,6 +48,10 @@ bool ListaSimple<T>:: Empty(){
 		return true;
 	}
 	return false;
+}
+template <class T>
+void ListaSimple<T>:: Vaciar(){
+	this->cabeza=NULL;
 }
 
 template <class T>
@@ -81,4 +88,40 @@ void ListaSimple<T>::DeleteLast(){
         }
         size--;
     }
+}
+
+template <class T>
+Nodo<T>* ListaSimple<T>::SacarElemento(int posicion){
+    if(!Empty()){
+		if(posicion<=size){
+			Nodo<T> *aux = this->cabeza;
+			Nodo<T> *temp = aux;
+				for(int i =0;i<posicion;i++){
+					temp=aux;
+					aux=aux->getNext();
+				}
+				size--;	
+				if(aux->getNext()!=NULL){
+					temp->setNext(aux->getNext());
+				}else{
+					temp->setNext(NULL);
+				}
+				return aux;	
+			}
+		}
+	return NULL;
+}
+template <class T>
+Nodo<T>* ListaSimple<T>::ElementAt(int posicion){
+    if(!Empty()){
+		if(posicion<=size){
+			Nodo<T> *aux = this->cabeza;
+				for(int i =0;i<posicion;i++){
+					aux=aux->getNext();
+				}
+				return aux;	
+			}
+			return NULL;
+		}
+	return NULL;
 }

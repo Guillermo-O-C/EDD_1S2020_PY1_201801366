@@ -1,0 +1,14 @@
+digraph G {
+ rankdir=LR nodesep=0.3;
+ ranksep=0.2;
+ margin=0.1;
+   node [shape=box];
+  edge [arrowsize=0.8]
+2 -> 3;
+1;
+0;
+0[label="josue"];
+1[label="Ross"];
+2[label="Mario"];
+3[label="Walter"];
+}
