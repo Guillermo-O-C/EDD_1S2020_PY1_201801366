@@ -194,7 +194,10 @@ Nodo<T>* ListaDoble<T>::GetLast(){
  }
 template <class T>
 void ListaDoble<T>::Vaciar(){
-    this->cabeza=NULL;
+    while(!Empty()){
+		DeleteLast();
+	}
+	size=0;
 	}
 template <class T>
 Nodo<T>* ListaDoble<T>::ElementAt(int posicion){

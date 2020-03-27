@@ -34,6 +34,7 @@ class MatrizDispersa{
         bool SameFilaNode(Nodo<T> *nuevo, Nodo<T> *cabezaFila);
         bool SameColumnNode(Nodo<T> *nuevo, Nodo<T> *cabezaColumna);
         bool SameNode(T value, int x, int y);
+        bool CasillaOcupada(T Value, int x, int y);
     };
 template <class T>
 Nodo<T> *MatrizDispersa<T>::getRoot(){
@@ -443,4 +444,18 @@ Nodo<T>* MatrizDispersa<T>::FilaAt(Nodo<T> *nuevo, Nodo<T> *cabezaFila){
             }
         }
         return nuevo;
+    }
+template<class T>
+bool MatrizDispersa<T>::CasillaOcupada(T Value, int x, int y){
+    Nodo<T> *nuevo = new Nodo<T>(Value, x, y);
+    Nodo<T> *NodoColumna, *NodoFila;
+    NodoFila = BuscarEnY(y);
+    NodoColumna = BuscarEnX(x);
+    if (NodoColumna != NULL && NodoFila != NULL)
+    {
+        if(ColumnaOcupada(nuevo, NodoFila) && FilaOcupada(nuevo, NodoColumna)){
+            return true;
+        }
+    }
+    return false;
     }

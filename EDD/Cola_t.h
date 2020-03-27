@@ -67,7 +67,8 @@ void Cola<T>::InsertAt(T value, int place){
         }
         auxiliar->setNext(nuevo);
         nuevo->setNext(NULL);
-    }    
+    }   
+	size++;
 }
 template <class T>
 int Cola<T>:: GetSize(){
