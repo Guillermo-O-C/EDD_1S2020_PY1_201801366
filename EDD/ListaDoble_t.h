@@ -25,7 +25,11 @@ class ListaDoble{
 		void DeleteLast();
 		void DeleteFirst();
 		void InsertarInicio(T value);
-};
+		void InsertAt(T value, int place);
+		Nodo<T>* ElementAt(int posicion);
+		Nodo<T>* SacarElemento(int posicion);
+		void Vaciar();
+	};
 template <class T>
 void ListaDoble<T>:: Insertar(T value){
             Nodo<T> *nuevo = new Nodo<T>(value);
@@ -68,18 +72,18 @@ void ListaDoble<T>:: DeleteFirst(){
 template <class T>
 int ListaDoble<T>:: GetSize(){
 	return size;
-}
+	}
 template <class T>
 Nodo<T>* ListaDoble<T>:: GetCabeza(){
 	return cabeza;
-}
+	}
 template <class T>
 bool ListaDoble<T>:: Empty(){
 	if(size==0){
 		return true;
 	}
 	return false;
-}
+	}
 
 template <class T>
 void ListaDoble<T>:: Imprimir(){
@@ -115,8 +119,28 @@ Nodo<T> *aux = this->cabeza;
 			aux = aux->getNext();
 		}
 	}
-}
-
+	}
+template <class T>
+void ListaDoble<T>::InsertAt(T value, int place){
+	Nodo<T> *aux = this->cabeza;	
+    Nodo<T> *nuevo = new Nodo<T>(value); 
+    if(place<=size){
+        for(int i =0;i<place;i++){
+            aux=aux->getNext();
+        }
+        nuevo->setNext(aux->getNext());
+        aux->setPrevious(nuevo);
+        aux->setNext(nuevo); 
+		nuevo->setPrevious(aux);  
+    }else{
+        while(aux->getNext()!=NULL){
+            aux=aux->getNext();
+        }
+        aux->setNext(nuevo);
+		nuevo->setPrevious(aux);
+        nuevo->setNext(NULL);
+    }    
+	}
 template <class T>
 int ListaDoble<T>:: Buscar(T objeto){
 	Nodo<T> *aux = this->cabeza;
@@ -127,7 +151,7 @@ int ListaDoble<T>:: Buscar(T objeto){
 		aux= aux->getNext();
 	}
 	return 0;
-}
+	}
 
 template <class T>
 void ListaDoble<T>::DeleteLast(){
@@ -145,14 +169,14 @@ void ListaDoble<T>::DeleteLast(){
         }
         size--;
     }
-}
+	}
 
 template <class T>
 void ListaDoble<T>::SetCabeza(Nodo<T> *nuevo){
     Nodo<T> *aux = cabeza->getNext();
     nuevo->setNext(aux);
     cabeza =nuevo;
-}
+	}
 
 template <class T>
 Nodo<T>* ListaDoble<T>::GetLast(){
@@ -167,8 +191,44 @@ Nodo<T>* ListaDoble<T>::GetLast(){
             return aux;
         }
     }
-}
+ }
+template <class T>
+void ListaDoble<T>::Vaciar(){
+    this->cabeza=NULL;
+	}
+template <class T>
+Nodo<T>* ListaDoble<T>::ElementAt(int posicion){
+    if(!Empty()){
+		if(posicion<=size){
+			Nodo<T> *aux = this->cabeza;
+				for(int i =0;i<posicion;i++){
+					aux=aux->getNext();
+				}
+				return aux;	
+			}
+			return NULL;
+		}
+	return NULL;
+	}
 
-
-
-
+template <class T>
+Nodo<T>* ListaDoble<T>::SacarElemento(int posicion){
+	if(posicion<=size){
+		Nodo<T> *aux = this->cabeza;
+		for(int i =0;i<posicion;i++){
+			aux=aux->getNext();
+		}
+		if(aux==this->cabeza){
+			this->cabeza=aux->getNext();
+		}
+		if(aux->getPrevious()!=NULL){
+			aux->getPrevious()->setNext(aux->getNext());
+		}
+		if(aux->getNext()!=NULL){
+			aux->getNext()->setPrevious(aux->getPrevious());
+		}
+		size--;
+		return aux;
+	}
+	return NULL;
+	}

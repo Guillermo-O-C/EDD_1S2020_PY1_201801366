@@ -94,6 +94,7 @@ void ABB:: Imprimir(){
             graphFile.close();
             std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
             system(filePath.c_str());
+        //Preorder
             string ABB_Preorder="ABB_Pre";
             impresos=1;
             content=Preorder(this->raiz);
@@ -103,8 +104,7 @@ void ABB:: Imprimir(){
             graphFile.close();
             filePath="dot -Tpng "+ABB_Preorder+".txt -o "+ABB_Preorder+".png";
             system(filePath.c_str());
-
-            //InOrder
+        //InOrder
             string ABB_InOrder="ABB_In";
             impresos=1;
             ListaSimple<int> *ids = new ListaSimple<int>();
@@ -116,14 +116,13 @@ void ABB:: Imprimir(){
                 }else{
                     content+="->"+to_string(ids->ElementAt(i)->getValue());
                 }
-            }
+                }
             graphFile.open(""+ABB_InOrder+".txt");
             graphFile <<  content+";\n" +GetLabels(this->raiz)+"}";
             graphFile.close();
             filePath="dot -Tpng "+ABB_InOrder+".txt -o "+ABB_InOrder+".png";
             system(filePath.c_str());
-
-            //Posorder
+        //Posorder
             string ABB_Posorder="ABB_Pos";
             impresos=1;
             content=PosOrder(this->raiz);

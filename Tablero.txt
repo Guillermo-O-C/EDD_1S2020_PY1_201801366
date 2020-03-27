@@ -1,0 +1,86 @@
+digraph G { 
+ node[shape=box]
+  root[label=raiz]
+  root -> X0
+ root -> Y0
+X0 -> root
+X0 -> X1
+X0 -> C0F0
+X1 -> X0
+X1 -> X2
+X1 -> C1F0
+X2 -> X1
+X2 -> C2F1
+root[group=1];
+X0[group=1];
+X1[group=2];
+X2[group=3];
+
+{rank =same;root;X0;X1;X2}
+Y0 -> C0F0
+Y0 -> root
+Y0 -> Y1
+C0F0 -> Y0
+C0F0 -> C1F0
+C0F0 -> X0
+C0F0 -> C0F1
+C1F0 -> C0F0
+C1F0 -> X1
+C1F0 -> C1F1
+Y0[group=1];
+C0F0[group=1];
+C1F0[group=2];
+
+{rank =same;Y0;C0F0;C1F0}
+Y1 -> C0F1
+Y1 -> Y0
+Y1 -> Y2
+C0F1 -> Y1
+C0F1 -> C1F1
+C0F1 -> C0F0
+C0F1 -> C0F2
+C1F1 -> C0F1
+C1F1 -> C2F1
+C1F1 -> C1F0
+C2F1 -> C1F1
+C2F1 -> X2
+Y1[group=1];
+C0F1[group=1];
+C1F1[group=2];
+C2F1[group=3];
+
+{rank =same;Y1;C0F1;C1F1;C2F1}
+Y2 -> C0F2
+Y2 -> Y1
+Y2 -> Y3
+C0F2 -> Y2
+C0F2 -> C0F1
+C0F2 -> C0F3
+Y2[group=1];
+C0F2[group=1];
+
+{rank =same;Y2;C0F2}
+Y3 -> C0F3
+Y3 -> Y2
+C0F3 -> Y3
+C0F3 -> C0F2
+Y3[group=1];
+C0F3[group=1];
+
+{rank =same;Y3;C0F3}
+X0[label="0"];
+X1[label="1"];
+X2[label="2"];
+Y0[label="0"];
+C0F0[label="H"];
+C1F0[label="K"];
+Y1[label="1"];
+C0F1[label="O"];
+C1F1[label="S"];
+C2F1[label="O"];
+Y2[label="2"];
+C0F2[label="L"];
+Y3[label="3"];
+C0F3[label="A"];
+
+}

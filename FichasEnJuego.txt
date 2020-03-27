@@ -1,0 +1,47 @@
+digraph ReporteLD { graph [dpi=300]
+ rankdir ="LR"; 
+ size="5" 
+ node [shape = box]; 
+subgraph cluster_gc_1 { label = "Fichas del Josue Orellana";
+T_10 -> A_11;
+A_11 -> T_10;
+A_11 -> B_12;
+B_12 -> A_11;
+B_12 -> A_13;
+A_13 -> B_12;
+A_13 -> E_14;
+E_14 -> A_13;
+E_14 -> I_15;
+I_15 -> E_14;
+I_15 -> P_16;
+P_16 -> I_15;
+T_10[label=T];
+A_11[label=A];
+B_12[label=B];
+A_13[label=A];
+E_14[label=E];
+I_15[label=I];
+P_16[label=P];
+}
+subgraph cluster_gc_2 { label = "Fichas del Mario Orellana";
+B_20 -> A_21;
+A_21 -> B_20;
+A_21 -> T_22;
+T_22 -> A_21;
+T_22 -> O_23;
+O_23 -> T_22;
+O_23 -> U_24;
+U_24 -> O_23;
+U_24 -> N_25;
+N_25 -> U_24;
+N_25 -> P_26;
+P_26 -> N_25;
+B_20[label=B];
+A_21[label=A];
+T_22[label=T];
+O_23[label=O];
+U_24[label=U];
+N_25[label=N];
+P_26[label=P];
+}
+}

@@ -1,32 +1,251 @@
 //System Needs
-#include <fstream>
-#include <typeinfo>
-#include <ncurses.h>
-#include <random>
-#include "json.hpp"
+	#include <fstream>
+	#include <typeinfo>
+	#include <ncurses.h>
+	#include <random>
+	#include "json.hpp"
+	using json = nlohmann::json;
 //Estructuras
-#include "EDD/ListaCircular_t.h"
-#include "EDD/ListaDoble_t.h"
-#include "EDD/ListaSimple_t.h"
-#include "EDD/Pila_t.h"
-#include "EDD/MatrizDispersa_t.h"
-#include "EDD/ABB_t.h"
-#include "EDD/ListaDobleCircular_t.h"
-#include "EDD/Cola_t.h"
+	#include "EDD/ListaCircular_t.h"
+	#include "EDD/ListaDoble_t.h"
+	#include "EDD/ListaSimple_t.h"
+	#include "EDD/Pila_t.h"
+	#include "EDD/MatrizDispersa_t.h"
+	#include "EDD/ABB_t.h"
+	#include "EDD/ListaDobleCircular_t.h"
+	#include "EDD/Cola_t.h"
 //Clases Scrabble++
-#include "jugadores.h"
-#include "Casillas.h"
-#include "Ficha.h"
-using json = nlohmann::json;
+	#include "jugadores.h"
+	#include "Casillas.h"
+	#include "Ficha.h"
 //Estrucutras y Variables Globales
-ABB *arbol =  new ABB();
-ListaSimple<Casillas> *casillasEspeciales = new ListaSimple<Casillas>();
-ListaSimple<jugadores> *JugadoresOrdenados;
-ListaDobleCircular<string> *diccionario = new ListaDobleCircular<string>();
-Cola<Ficha> *Bolsa = new Cola<Ficha>();
-int DimensionTablero;
-jugadores jugador1, jugador2;
+	ABB *arbol =  new ABB();
+	ListaSimple<Casillas> *casillasEspeciales = new ListaSimple<Casillas>();
+	ListaSimple<jugadores> *JugadoresOrdenados;
+	ListaDobleCircular<string> *diccionario = new ListaDobleCircular<string>();
+	Cola<Ficha> *Bolsa = new Cola<Ficha>();
+	MatrizDispersa<Ficha> *Tablero = new MatrizDispersa<Ficha>(Ficha("-", 0));
+	int DimensionTablero;
+	jugadores jugador1, jugador2;
+	bool ganador;
 //Métodos de acceso a EDD
+bool Compare(Ficha creada, Ficha nueva){
+	if(creada.getChar()==nueva.getChar()){
+		cout<<creada.getChar()<<"="<<nueva.getChar()<<endl;
+		return true;
+	}
+		cout<<creada.getChar()<<"!="<<nueva.getChar()<<endl;
+	return false;
+	}
+
+bool SameColumnNode(Nodo<Ficha> *nuevo, Nodo<Ficha> *cabezaColumna){
+    Nodo<Ficha> *aux = cabezaColumna;
+    bool bandera = false;
+    while (true)
+    {
+        if (aux->getX() == nuevo->getX())
+        {
+            if(Compare(aux->getValue(), nuevo->getValue())){
+                    return true;
+                }
+        }
+        else if (aux->getX() > nuevo->getX())
+        {
+            //Se intserta antes que aux
+            bandera = true;
+            break;
+        }
+        if (aux->getNext() != NULL)
+        {
+            aux = aux->getNext();
+        }
+        else
+        {
+            //Insertar nuevo despues de aux
+            break;
+        }
+    }
+    return false;
+    }
+bool SameFilaNode(Nodo<Ficha> *nuevo, Nodo<Ficha> *cabezaFila){
+        Nodo<Ficha> *aux = cabezaFila;
+        bool bandera = false;
+        while (true)
+        {
+            if (aux->getY() == nuevo->getY())
+            {
+                if(Compare(aux->getValue(), nuevo->getValue())){
+                    return true;
+                }
+            }
+            else if (aux->getY() > nuevo->getY())
+            {
+                bandera = true;
+                break;
+            }
+            if (aux->getDown() != NULL)
+            {
+                aux = aux->getDown();
+            }
+            else
+            {
+                break;
+            }
+        }
+        return false;
+    }
+bool SameNode(Ficha value, int x, int y){
+    Nodo<Ficha> *nuevo= new Nodo<Ficha>(value, x, y);
+    Nodo<Ficha> *NodoColumna, *NodoFila;
+    NodoFila = Tablero->BuscarEnY(y);
+    NodoColumna = Tablero->BuscarEnX(x);
+    if (NodoColumna != NULL && NodoFila != NULL)
+    {
+        if(Tablero->ColumnaOcupada(nuevo, NodoFila) && Tablero->FilaOcupada(nuevo, NodoColumna)){
+            if(SameColumnNode(nuevo, NodoFila) && SameFilaNode(nuevo, NodoColumna)){
+                return true;
+            }
+        }
+    }
+    return false;
+    }
+string ImprimirTablero(MatrizDispersa<Ficha> *ma){
+    string content ="digraph G { \n node[shape=box]\n ";
+	string nivelador;
+	string rankedLevel;
+    string labels="";
+	Nodo<Ficha> *auxiliar = ma->getRoot();    
+	while(auxiliar!=NULL){
+        Nodo<Ficha> *temp = auxiliar;
+		nivelador="";
+		rankedLevel="{rank =same;";
+        while(temp!=NULL){
+			
+            if(temp->getX()==-1 && temp->getY()==-1){
+				nivelador+="root[group=1];\n";
+				rankedLevel+="root";			
+				//content+= "pinting root\n";
+                //imprimir derecha
+				content+=" root[label=raiz]\n ";
+                content+=" root -> X"+to_string(temp->getNext()->getX());
+				content+="\n";
+				//imprimir abajo
+				content+=" root -> Y"+to_string(temp->getDown()->getY());
+				content+="\n";				
+            }else if(temp->getY()==-1){//cabeza columnas
+				//content+= "pinting column head\n";
+				rankedLevel+=";X"+to_string(temp->getX());
+                labels+="X"+to_string(temp->getX())+"[label=\""+to_string(temp->getX())+"\"];\n";
+				nivelador+="X"+to_string(temp->getX())+"[group="+to_string(temp->getX()+1)+"];\n";
+              // cout<< temp->getX() <<"  " ; 
+			   //imprimir izquierda
+			   	if(temp->getPrevious()!=NULL){
+					if(temp->getPrevious()->getX()==-1 && temp->getPrevious()->getY()==-1){
+						content+="X"+to_string(temp->getX())+" -> root";
+						content+="\n";
+					}else{
+						content+="X"+to_string(temp->getX())+" -> X"+to_string(temp->getPrevious()->getX());
+						content+="\n";
+					}
+			   	}
+                //imprimir derecha
+				if(temp->getNext()!=NULL){
+					content+="X"+to_string(temp->getX())+" -> X"+to_string(temp->getNext()->getX());
+					content+="\n";
+				}
+				//imprimir abajo	
+				if(temp->getDown()!=NULL){
+					content+="X"+to_string(temp->getX())+" -> C"+to_string(temp->getDown()->getX())+"F"+to_string(temp->getDown()->getY());
+					content+="\n";
+				}
+            }else if(temp->getX()==-1){//cabeza filas
+                labels+="Y"+to_string(temp->getY())+"[label=\""+to_string(temp->getY())+"\"];\n";
+				rankedLevel+="Y"+to_string(temp->getY());
+				nivelador+="Y"+to_string(temp->getY())+"[group=1];\n";
+				//content+= "pinting row head\n";
+             //  cout<< temp->getY() <<"\n" ;
+                //imprimir derecha
+				if(temp->getNext()!=NULL){
+					content+="Y"+to_string(temp->getY())+" -> C"+ to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
+					content+="\n";
+				}
+			    //imprimir arriba	
+				if(temp->getUp()!=NULL){
+					if(temp->getUp()->getX()==-1 && temp->getUp()->getY()==-1){
+						content+="Y"+to_string(temp->getY())+" -> root";
+						content+="\n";
+					}else{
+						content+="Y"+to_string(temp->getY())+" -> Y"+to_string(temp->getUp()->getY());
+						content+="\n";
+					}
+				}	
+				//imprimir abajo
+				if(temp->getDown()!=NULL){
+					content+="Y"+to_string(temp->getY())+" -> Y"+to_string(temp->getDown()->getY());
+					content+="\n";
+				}	
+            }else {//contenido de la matriz
+                labels+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+"[label=\""+temp->getValue().getChar()+"\"];\n";
+				rankedLevel+=";C"+to_string(temp->getX())+"F"+to_string(temp->getY());
+				nivelador+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+"[group="+to_string(temp->getX()+1)+"];\n";
+				//cout<<"contiene "+ temp->getValue()+"en ("<<to_string(temp->getX())+","+to_string(temp->getY())<<")";
+             //  cout<< temp->getValue() <<" ";
+			    //imprimir izquierda
+				if(temp->getPrevious()!=NULL){
+					if(temp->getPrevious()->getX()==-1){
+					//	content+="/*Izq de nodo cont*/"+to_string(temp->getPrevious()->getX())+","+to_string(temp->getPrevious()->getY());
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> Y"+to_string(temp->getPrevious()->getY());
+						content+="\n";
+					}else{
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getPrevious()->getX())+"F"+to_string(temp->getPrevious()->getY());
+						content+="\n";
+					}
+				}
+                //imprimir derecha 
+				if(temp->getNext()!=NULL){
+					content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
+					content+="\n";
+				}
+			    //imprimir arriba
+				if(temp->getUp()!=NULL){
+					if(temp->getUp()->getY()==-1){
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> X"+to_string(temp->getUp()->getX());
+						content+="\n";
+					}else{
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getUp()->getX())+"F"+to_string(temp->getUp()->getY());
+						content+="\n";
+					}
+				}
+				//imprimir abajo
+				if(temp->getDown()!=NULL){
+					content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getDown()->getX())+"F"+to_string(temp->getDown()->getY());
+					content+="\n";
+				}
+            }            
+            temp=temp->getNext();
+        }
+		content+=nivelador+"\n";
+		/*
+		if(YRows-1>=0){
+			content+=rankedLevel+";e"+to_string(YRows-1)+"}\n";
+		}else{
+		}
+		*/
+		content+=rankedLevel+"}\n";
+        auxiliar = auxiliar->getDown();
+    }
+	/*
+	string extraNodes="";
+	string YLeveler ="X"+to_string(Xcolumns-1);
+	string RowsLevel="e"+to_string(ENodes-1)+"->"+LastPosition+";\n e"+to_string(ENodes-1)+" -> Y"+to_string(ENodes-1);
+	for(int i =0;i<ENodes;i++){
+		extraNodes+="e"+to_string(i)+"[shape=point, width=0];\n";
+		YLeveler+="->e"+to_string(i);
+	}
+	YLeveler+="[dir=none];";
+	*/
+	return content+labels+"\n}";
+	}
 string ImprimirMatriz(MatrizDispersa<string> *matriz){
 	string content ="digraph G { \n splines = polyline;\n node[shape=record]\n ";
 	Nodo<string> *auxiliar = matriz->getRoot();
@@ -251,10 +470,255 @@ void PrintPlayers(){
 		 cout<<to_string(i)<<". "<< JugadoresOrdenados->ElementAt(i)->getValue().getName()<<endl;
 	 }
 	}
-
+void GraphDoubleList(ListaDoble<Ficha> *lista, ListaDoble<Ficha> *lista2){
+    std::string graph ("digraph ReporteLD { graph [dpi=300]\n rankdir =\"LR\"; \n size=\"5\" \n node [shape = box]; \n");
+    graph+="subgraph cluster_gc_1 { label = \"Fichas del "+jugador1.getName()+"\";\n";
+	Nodo<Ficha> *aux = lista->GetCabeza();
+    Nodo<Ficha> *previous = aux;
+    for(int i =0; i<lista->GetSize(); i++){
+        string number = "_1"+ std::to_string(i);
+        string prevNumber = "_1"+std::to_string((i-1));
+        //NULL pointers to the graph edges
+        if(i==0){
+            //graph +=  aux->getValue().getChar() + std::string( number + " -> NULL_;\n");
+        }
+        //The rest of the nodes
+        else{
+            previous = aux;
+            aux=aux->getNext();
+            graph += previous->getValue().getChar() + std::string(prevNumber + " -> " + aux->getValue().getChar() + number +";\n");
+            graph += aux->getValue().getChar() + std::string( number + " -> " + previous->getValue().getChar() + prevNumber +";\n");
+            if(i==lista->GetSize()-1){
+                    //graph +=  aux->getValue() + std::string( number + " -> _NULL;\n}");
+            }
+        }
+    	}
+	aux = lista->GetCabeza();
+	for(int i =0; i <lista->GetSize();i++){
+		graph+=aux->getValue().getChar()+"_1"+to_string(i)+"[label="+aux->getValue().getChar()+"];\n";
+		aux=aux->getNext();
+		}
+	graph+="}\n";
+    graph+="subgraph cluster_gc_2 { label = \"Fichas del "+jugador2.getName()+"\";\n";
+	aux = lista2->GetCabeza();
+    previous = aux;
+    for(int i =0; i<lista2->GetSize(); i++){
+        string number = "_2"+ std::to_string(i);
+        string prevNumber = "_2"+std::to_string((i-1));
+        //NULL pointers to the graph edges
+        if(i==0){
+            //graph +=  aux->getValue().getChar() + std::string( number + " -> NULL_;\n");
+        }
+        //The rest of the nodes
+        else{
+            previous = aux;
+            aux=aux->getNext();
+            graph += previous->getValue().getChar() + std::string(prevNumber + " -> " + aux->getValue().getChar() + number +";\n");
+            graph += aux->getValue().getChar() + std::string( number + " -> " + previous->getValue().getChar() + prevNumber +";\n");
+            if(i==lista2->GetSize()-1){
+                    //graph +=  aux->getValue() + std::string( number + " -> _NULL;\n}");
+            }
+        }
+    }
+	aux = lista2->GetCabeza();
+	for(int i =0; i <lista2->GetSize();i++){
+		graph+=aux->getValue().getChar()+"_2"+to_string(i)+"[label="+aux->getValue().getChar()+"];\n";
+		aux=aux->getNext();
+	}
+	ofstream graphFile;
+	graphFile.open("FichasEnJuego.txt");
+    graphFile << graph+"}\n}";
+    graphFile.close();
+    std::string filePath="dot -Tpng FichasEnJuego.txt -o FichasEnJuego.png";
+    system(filePath.c_str());
+	}
+void FichasEnJuego(){
+		GraphDoubleList(jugador1.getFichas(), jugador2.getFichas());
+	}
+bool PalabraExistente(string palabra){
+	Nodo<string> *insercion = diccionario->GetCabeza();
+	for(int i =0;i <diccionario->GetSize();i++){
+		if(insercion->getValue()==palabra){
+			return true;
+		}
+	}
+	return false;
+	}
+bool TieneEstaFicha(jugadores enTurno, string letra){	
+			Nodo<Ficha> *aux= enTurno.getFichas()->GetCabeza();
+		for(int e =0; e<enTurno.getFichas()->GetSize();e++){
+				if(aux->getValue().getChar()[0]==letra[0]){
+					return true;
+				}
+				aux=aux->getNext();
+			}
+		return false;
+	}
 //Métodos del juego
-void Jugar(){
+bool InsertarTablero(string palabra, int x, int y, int VoH, Ficha jugada, jugadores enTurno){
+	switch (VoH)
+	{
+	case 1://Ingreso Vertical
+		for(int i=0;i<palabra.length();i++){//y es la que tiene que ir creciendo
+			if(!Tablero->SameNode(Ficha(palabra[i], 1), x, y+1))//Verifico si la casilla está ocupada y es la misma letra
+			{
+			}
+				break;
+			}
+			if(!Tablero->Insertar(Ficha(palabra[i], 1), x, y+i)){
+				cout<<"No se ingresó la ficha, porque ya está ocupada esa casilla"<<endl;
 
+				if(Tablero->SameNode(Ficha("K", 1), 1, 0)){
+					cout<<"La ficha es la misma"<<endl;
+				}else{
+					cout<<"La ficha NO es la misma"<<endl;
+				}
+			}
+		}
+		break;	
+	case 2://Ingreso Horizonal
+		break;
+	}
+}
+void RellenarFichero(jugadores enTurno){
+	cout<<enTurno.getName()<<" tiene "<<to_string(enTurno.getFichas()->GetSize())<<" fichas"<<endl; 
+	while(enTurno.getFichas()->GetSize()<7){
+		enTurno.getFichas()->Insertar(Bolsa->Desencolar()->getValue());
+	}
+	FichasEnJuego();
+	}
+void DevolverFichas(jugadores enTurno){
+	FichasEnJuego();
+	if(enTurno.getFichas()->GetSize()>0){
+		cout<<enTurno.getName()+" estas son tus fichas:"<<endl;
+		Nodo<Ficha> *aux = enTurno.getFichas()->GetCabeza();
+		for(int i=0;i<enTurno.getFichas()->GetSize();i++){
+			cout<<to_string(i+1)+". "+aux->getValue().getChar()<<endl;
+			aux=aux->getNext();
+		}
+		cout<<"Introduce el número de la ficha que deseas devolver: ";
+		int fichaID;
+		cin>>fichaID;
+		//reintroducir ficha
+		int posicionNueva = rand() % Bolsa->GetSize();
+		Nodo<Ficha> *devuelto = enTurno.getFichas()->SacarElemento(fichaID-1);
+		if(devuelto!=NULL){
+			Bolsa->InsertAt(devuelto->getValue(),posicionNueva);
+		}else{
+			cout<<"No se pudo sacar la ficha de la posición indicada"<<endl;
+		}
+		int decision;
+		cout<<"Se ha devuelto la ficha "+devuelto->getValue().getChar()+", deseas devolver otra ficha?\n 1.Si \n2.No"<<endl;
+		cin>>decision;
+		if(decision==1){
+			DevolverFichas(enTurno);
+		}
+	}else{
+		cout<<enTurno.getName()+" ya no tienes fichas"<<endl;
+	}
+	
+	}
+void Turno(jugadores enTurno){
+	int x, y, VoH;
+	cout<<enTurno.getName() <<" el valor de x donde comenzará tu palabra"<<endl;
+	cin>>x;
+	cout<<enTurno.getName() <<" el valor de y donde comenzará tu palabra"<<endl;
+	cin>>y;
+	cout<<enTurno.getName() <<" Escoge la opción que desees\n 1. Ingresar Vertical\n 2. Ingresar Horizonta"<<endl;
+	cin>>VoH;
+	if(x>DimensionTablero || y >DimensionTablero){
+		cout<<"La posición ("+to_string(x)+","+to_string(y)+") no está dentro del rango del tablero, pierdes tu turno"<<endl;
+	}else{
+		string palabra;
+		cout<<"Introduce la palabra **Recuerda que es Case Sensitive"<<endl;
+		cin>>palabra;
+		if(x+palabra.length()>DimensionTablero || y+palabra.length()>DimensionTablero){			
+			cout<<"La palabra no cabe en el tablero, pierdes tu turno"<<endl;
+		}else{
+			if(PalabraExistente(palabra)){
+				TieneFichas(enTurno, palabra);
+			}else{
+				cout<<"La palabra no es parte del lenguaje, pierdes tu turno"<<endl;
+			}
+		}
+	}
+	
+	}
+void Jugar(){
+		for(int i =0;i<7;i++){
+			jugador1.getFichas()->Insertar(Bolsa->Desencolar()->getValue());
+			}
+		for(int i=0;i<7;i++){
+			jugador2.getFichas()->Insertar(Bolsa->Desencolar()->getValue());
+			}
+		FichasEnJuego();
+		ganador=false;
+		bool SuTurno;//Si es true empieza el jugador 1
+		int azar =rand() % 2;
+		int Accion;
+		switch (azar)
+			{
+			case 0:
+				azar=true;
+				break;
+			
+			case 1:
+				azar=false;
+				break;
+			}
+		while(!ganador){
+			if(SuTurno)//Turno del jugador 1
+			{
+				cout<< jugador1.getName()+" selecciona la acción que desees realizar\n 1."+
+											" Jugar Turno\n2. Cambiar Fichas\n3. Terminar Partida"<<endl;
+				cin>>Accion;
+				switch (Accion)
+				{
+				case 1:
+					Turno(jugador1);
+					break;				
+				case 2:
+					DevolverFichas(jugador1);
+					break;
+				case 3:
+					ganador=true;
+					break;
+				default:
+					cout<<"No es una opción válida, pierdes tu turno"<<endl;
+					break;
+				}
+				cout<<"Fin del trueno de "+jugador1.getName()<<endl;
+				RellenarFichero(jugador1);
+				SuTurno=false;
+			}else{//Turno del jugador 2
+				cout<< jugador2.getName()+" selecciona la acción que desees realizar\n 1."+
+											" Jugar Turno\n2. Cambiar Fichas\n3. Terminar Partida"<<endl;
+				cin>>Accion;
+				switch (Accion)
+				{
+				case 1:
+					Turno(jugador2);
+					break;				
+				case 2:
+					DevolverFichas(jugador2);
+					break;
+				case 3:
+					ganador=true;
+					break;
+				default:
+					cout<<"No es una opción válida, pierdes tu turno"<<endl;
+					break;
+				}
+				cout<<"Fin del trueno de "+jugador2.getName()<<endl;
+				RellenarFichero(jugador2);
+				SuTurno=true;
+			}
+			if(Bolsa->Empty()){
+				break;
+				}
+			}
+		jugador1.getFichas()->Vaciar();
+		jugador2.getFichas()->Vaciar();
 	}
 void EscogerJugadores(){
     system("clear");
@@ -469,11 +933,45 @@ int main(int argc, char ** argv)
 	/*
     MatrizDispersa<string> *matriz = new MatrizDispersa<string>("putas");
 	matriz->Insertar("buenas", 0, 3);
-	matriz->Insertar("buenas", 0, 2);
-	matriz->Insertar("buenas", 1, 2);
-	matriz->Insertar("buenas", 4, 2);
-	matriz->Insertar("buenas", 0, 0);
-	//cout<<PrintW(matriz);
+	matriz->Insertar("tardes", 0, 2);
+	matriz->ImprimirMatriz();
+	matriz->Insertar("amigos", 1, 2);
+	matriz->Insertar("mios", 4, 2);
+	matriz->Insertar("si", 0, 0);*/
+/*
+	---------------------------Codigo Para incerción de fichas----------------------------
+	Tablero->Insertar(Ficha("H", 1), 0, 0);
+	Tablero->Insertar(Ficha("O", 1), 0, 1);
+	Tablero->Insertar(Ficha("L", 1), 0, 2);
+	Tablero->Insertar(Ficha("A", 1), 0, 3);
+	Tablero->Insertar(Ficha("S", 1), 1, 1);
+	Tablero->Insertar(Ficha("O", 1), 2, 1);
+	if(!Tablero->Insertar(Ficha("K", 1), 1, 0)){
+		cout<<"No se ingresó la ficha, porque ya está ocupada esa casilla"<<endl;
+		if(Tablero->SameNode(Ficha("K", 1), 1, 0)){
+			cout<<"La ficha es la misma"<<endl;
+		}else{
+			cout<<"La ficha NO es la misma"<<endl;
+		}
+	}
+	if(!Tablero->Insertar(Ficha("H", 1), 0, 0)){
+		cout<<"No se ingresó la ficha, porque ya está ocupada esa casilla"<<endl;
+		if(SameNode(Ficha("H", 1), 0, 0)){
+			cout<<"La ficha es la misma"<<endl;
+		}else{
+			cout<<"La ficha NO es la misma"<<endl;
+		}
+	}
+	---------------------------------------------------------------------------------------
+	ofstream graphFile;
+    string name = "Tablero";
+    graphFile.open(""+name+".txt");
+    graphFile << ImprimirTablero(Tablero);
+    graphFile.close();
+    std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
+    system(filePath.c_str());
+	*/
+	/*//cout<<PrintW(matriz);
 	matriz->ImprimirMatriz();
 	ofstream graphFile;
     string name = "Tablero";
@@ -499,9 +997,10 @@ int main(int argc, char ** argv)
 		arbol->Imprimir();
 		cout<<arbol->GetSize();
 	}
-	*/
-		Menu();
-
+	
+	arbol->Insertar("Mario Orellana");
+	arbol->Insertar("Josue Orellana");
+	Menu();*/
 	return 0;
 	}
 

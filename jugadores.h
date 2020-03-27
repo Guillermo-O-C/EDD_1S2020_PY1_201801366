@@ -1,4 +1,6 @@
 #include <iostream>
+#include "Ficha.h"
+#include "EDD/ListaDoble_t.h"
 #pragma once
 using namespace std;
 
@@ -7,15 +9,18 @@ class jugadores
 private:
     string name;
     int ID;
+	ListaDoble<Ficha> *listaFichas;
 
 public:
     jugadores()
 	{
 		this->name="";
+		this->listaFichas = new ListaDoble<Ficha>();
 	}
     jugadores(string name)
 	{
 		this->name=name;
+		this->listaFichas = new ListaDoble<Ficha>();
 	}
     string getName()
 	{
@@ -32,5 +37,11 @@ public:
     void setID(int ID1)
 	{
 		this->ID = ID1;
+	}
+	void setFichas(ListaDoble<Ficha> *lista){
+		this->listaFichas=lista;
+	}
+	ListaDoble<Ficha>* getFichas(){
+		return this->listaFichas;
 	}
 };

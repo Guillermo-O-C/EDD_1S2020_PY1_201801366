@@ -1,0 +1,24 @@
+digraph ReporteLD { graph [dpi=300]
+ rankdir =LR; 
+ size="5" 
+ node [shape = box]; 
+A_0 -> V_1;
+V_1 -> A_0;
+V_1 -> L_2;
+L_2 -> V_1;
+L_2 -> E_3;
+E_3 -> L_2;
+E_3 -> E_4;
+E_4 -> E_3;
+E_4 -> T_5;
+T_5 -> E_4;
+T_5 -> O_6;
+O_6 -> T_5;
+A_0[label=A];
+V_1[label=V];
+L_2[label=L];
+E_3[label=E];
+E_4[label=E];
+T_5[label=T];
+O_6[label=O];
+}

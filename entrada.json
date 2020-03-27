@@ -32,16 +32,64 @@
     },
     "diccionario":[
         {
-            "palabra":"hola"
+            "palabra":"HOLA"
         },
         {
-            "palabra":"mundo"
+            "palabra":"MUNDO"
         },
         {
-            "palabra":"proyecto"
+            "palabra":"PROYECTO"
         },
         {
-            "palabra":"diccionario"
+            "palabra":"DICCIONARIO"
+        },
+        {
+            "palabra":"LUZ"
+        },
+        {
+            "palabra":"AIRE"
+        },
+        {
+            "palabra":"EME"
+        },
+        {
+            "palabra":"AHORA"
+        },
+        {
+            "palabra":"SI"
+        },
+        {
+            "palabra":"LA"
+        },
+        {
+            "palabra":"EL"
+        },
+        {
+            "palabra":"LOS"
+        },
+        {
+            "palabra":"NO"
+        },
+        {
+            "palabra":"MIA"
+        },
+        {
+            "palabra":"MIO"
+        },
+        {
+            "palabra":"MI"
+        },
+        {
+            "palabra":"MEAR"
+        },
+        {
+            "palabra":"AEI"
+        },
+        {
+            "palabra":"AH"
+        },
+        {
+            "palabra":"LEE"
         }
     ]
 }
