@@ -21,6 +21,7 @@ class MatrizDispersa{
         Nodo<T> *BuscarEnY(int y);
         Nodo<T> *BuscarEnX(int x);
         bool Insertar(T Value, int x, int y);
+        bool UpdateCasilla(T Value, int x, int y);
         Nodo<T> *InsertarOrdenadoColumna(Nodo<T> *nuevo, Nodo<T> *cabezaColumna);
         Nodo<T> *InsertarOrdenadoFila(Nodo<T> *nuevo, Nodo<T> *cabezaFila);
         Nodo<T> *CrearColumna(int x);
@@ -458,4 +459,20 @@ bool MatrizDispersa<T>::CasillaOcupada(T Value, int x, int y){
         }
     }
     return false;
+    }
+template <class T>
+bool MatrizDispersa<T>::UpdateCasilla(T Value, int x, int y){
+    Nodo<T> *nuevo = new Nodo<T>(Value, x, y);
+    Nodo<T> *NodoColumna, *NodoFila;
+    NodoFila = BuscarEnY(y);
+    NodoColumna = BuscarEnX(x);
+        if (NodoColumna != NULL && NodoFila != NULL)
+        {
+            //Insertamos en la Columna
+            nuevo = InsertarOrdenadoColumna(nuevo, NodoFila);
+            //Insertamos en la Fila
+            nuevo = InsertarOrdenadoFila(nuevo, NodoColumna);
+            return true;
+        }
+        return true;
     }

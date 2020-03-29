@@ -27,13 +27,22 @@
 	MatrizDispersa<Ficha> *Tablero = new MatrizDispersa<Ficha>(Ficha("-", 0));
 	int DimensionTablero;
 	jugadores jugador1, jugador2;
-	bool ganador;
+	bool ganador, Insertar, UpdateCasilla, Vacio;
 //Métodos de acceso a EDD
 bool Compare(Ficha creada, Ficha nueva){
+	if(creada.getChar()==" "){
+		if(UpdateCasilla){
+			creada.setChar(nueva.getChar());
+			creada.setValor(nueva.getValor());
+			Vacio=true;
+		}
+		Insertar=true;
+		return true;
+	}
 	if(creada.getChar()==nueva.getChar()){
 		cout<<creada.getChar()<<"="<<nueva.getChar()<<endl;
 		return true;
-	}
+	} 
 		cout<<creada.getChar()<<"!="<<nueva.getChar()<<endl;
 	return false;
 	}
@@ -541,6 +550,13 @@ void GraphDoubleList(ListaDoble<Ficha> *lista, ListaDoble<Ficha> *lista2){
     std::string filePath="dot -Tpng FichasEnJuego.txt -o FichasEnJuego.png";
     system(filePath.c_str());
 	}
+int SacarFicha(jugadores enTurno, string letra){
+	for(int i =0;i<enTurno.getFichas()->GetSize();i++){
+		if(enTurno.getFichas()->ElementAt(i)->getValue().getChar()==letra){
+			return i;
+		}
+	}
+}
 void ImprimirDiccionario(ListaDobleCircular<string> *lista){
     std::string graph ("digraph ReporteLD { graph [dpi=300]\n rankdir =\"LR\"; \n size=\"5\" \n node [shape = box]; \n");
     graph+="label = \"Diccionario\";\n";
@@ -581,7 +597,7 @@ void FichasEnJuego(){
 		GraphDoubleList(jugador1.getFichas(), jugador2.getFichas());
 	}
 bool PalabraExistente(string palabra){
-	cout<<"Verificando si existe la palabra "<<palabra;
+	//cout<<"Verificando si existe la palabra "<<palabra;
 	Nodo<string> *insercion = diccionario->GetCabeza();
 	for(int i =0;i <diccionario->GetSize();i++){
 		if(insercion->getValue()==palabra){
@@ -620,7 +636,7 @@ void UpdateTablero(){
 	}
 //Métodos del juego
 bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno){
-	cout<<"Ingresar Palabra "<<palabra<< "Verticalmente";
+	//cout<<"Ingresar Palabra "<<palabra<< "Verticalmente";
 	string valor="";
 	bool FichasNecesarias;
 	bool puedoInsertar;
@@ -634,9 +650,13 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno){
 				valor=palabra[i];
 				if(Tablero->CasillaOcupada(Ficha(valor, ValorDeFicha(valor, enTurno)), x, y+i))//Verifico si la casilla está ocupada
 				{	
-					cout<<"comparando "<<valor<<" la ficha que stá puesta"<<endl;
+					cout<<"comparando "<<valor<<" la ficha que está puesta"<<endl;
 					if(SameNode(Ficha(valor, ValorDeFicha(valor, enTurno)), x, y+i)){
 						cout<<"La ficha es la misma"<<endl;
+						if(Insertar){
+							Necesarias->Insertar(Ficha(valor, ValorDeFicha(valor, enTurno)));
+							Insertar=false;
+						}
 					}else{
 						cout<<"La ficha NO es la misma"<<endl;
 						puedoInsertar=false;
@@ -658,18 +678,30 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno){
 				cout<<"La palabra no puede ser incertada en esa posición";
 				return false;
 			}
+			UpdateCasilla=FichasNecesarias;
 			if(FichasNecesarias){
 				for(int i=0;i<palabra.length();i++){//y es la que tiene que ir creciendo
 					valor=palabra[i];
 					if(!Tablero->CasillaOcupada(Ficha(valor, ValorDeFicha(valor, enTurno)), x, y+i))//Verifico si la casilla está ocupada
 					{	
 						Tablero->Insertar(Ficha(valor, ValorDeFicha(valor, enTurno)), x, y+i);
-						enTurno.getFichas()->SacarElemento(i);
+						enTurno.getFichas()->SacarElemento(SacarFicha(enTurno, valor));
+					}else
+					{
+						if(SameNode(Ficha(valor, ValorDeFicha(valor, enTurno)), x, y+i)){
+							if(Vacio){
+								Tablero->UpdateCasilla(Ficha(valor, ValorDeFicha(valor, enTurno)), x, y+i);
+								enTurno.getFichas()->SacarElemento(SacarFicha(enTurno, valor));
+							}
+							Vacio=false;
+						}
 					}
+					
 				}
+				UpdateCasilla=false;
 				return true;	
 			}else{
-				cout<<"no tienes las fichas necesarias para esta palabra";
+				cout<<"no tienes las fichas necesarias para esta palabra"<<endl;
 				return false;
 			}
 			break;	
@@ -683,6 +715,10 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno){
 				{	
 					if(SameNode(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y)){
 						cout<<"La ficha es la misma"<<endl;
+						if(Insertar){
+							Necesarias->Insertar(Ficha(valor, ValorDeFicha(valor, enTurno)));
+							Insertar=false;
+						}
 					}else{
 						cout<<"La ficha NO es la misma"<<endl;
 						puedoInsertar=false;
@@ -702,6 +738,7 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno){
 			}else{
 				return false;
 			}
+			UpdateCasilla=FichasNecesarias;
 			if(FichasNecesarias){
 				for(int i=0;i<palabra.length();i++){//y es la que tiene que ir creciendo
 					valor=palabra[i];
@@ -716,8 +753,19 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno){
 					{	
 						Tablero->Insertar(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y);
 						enTurno.getFichas()->SacarElemento(i);
+					}else
+					{
+						if(SameNode(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y)){
+							if(Vacio){
+								Tablero->UpdateCasilla(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y);
+								enTurno.getFichas()->SacarElemento(SacarFicha(enTurno, valor));
+							}
+							Vacio=false;
+						}
 					}
 				}
+
+				UpdateCasilla=false;
 				return true;	
 			}else{
 				return false;

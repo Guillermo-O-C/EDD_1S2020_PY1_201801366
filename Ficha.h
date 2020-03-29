@@ -13,6 +13,7 @@ public:
     string getChar();
     int getValor();
     void setChar(string letra1);
+    void setValor(int valor1);
 };
 Ficha::Ficha()
 {
@@ -30,4 +31,7 @@ int Ficha::getValor(){
 }
 void Ficha::setChar(string letra1){
     this->letra=letra1;
+}
+void Ficha::setValor(int valor1){
+    this->valor=valor1;
 }

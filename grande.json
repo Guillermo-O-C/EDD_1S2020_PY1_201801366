@@ -1,0 +1,177 @@
+{
+
+    "dimension":20,
+    "casillas":{
+
+        "dobles":[
+
+            {
+                "x":2,
+                "y":5
+            },
+            {
+                "x":4,
+                "y":10
+            },
+            {
+                "x":10,
+                "y":15
+            }
+
+        ],
+        "triples":[
+
+            {
+                "x":0,
+                "y":1
+            },
+            {
+                "x":6,
+                "y":10
+            },
+            {
+                "x":0,
+                "y":15
+            }
+
+        ]
+
+    },
+  "diccionario": [
+
+    {
+      "palabra": "hola"
+    },
+    {
+      "palabra": "mundo"
+    },
+    {
+      "palabra": "proyecto"
+    },
+    {
+      "palabra": "diccionario"
+    },
+    {
+      "palabra": "ya"
+    },
+    {
+      "palabra": "esta"
+    },
+    {
+      "palabra": "cafe"
+    },
+    {
+      "palabra": "chocolate"
+    },
+    {
+      "palabra": "choco"
+    },
+    {
+      "palabra": "me"
+    },
+    {
+      "palabra": "encanta"
+    },
+    {
+      "palabra": "perica"
+    },
+    {
+      "palabra": "perro"
+    },
+    {
+      "palabra": "raton"
+    },
+    {
+      "palabra": "minecraft"
+    },
+    {
+      "palabra": "mine"
+    },
+    {
+      "palabra": "efe"
+    },
+    {
+      "palabra": "miles"
+    },
+    {
+      "palabra": "galleta"
+    },
+    {
+      "palabra": "gal"
+    },
+    {
+      "palabra": "audi"
+    },
+    {
+      "palabra": "audifono"
+    },
+    {
+      "palabra": "el"
+    },
+    {
+      "palabra": "ella"
+    },
+    {
+      "palabra": "te"
+    },
+    {
+      "palabra": "extraño"
+    },
+    {
+      "palabra": "extra"
+    },
+    {
+      "palabra": "zorra"
+    },
+    {
+      "palabra": "iman"
+    },
+    {
+      "palabra": "tiempo"
+    },
+    {
+      "palabra": "morir"
+    },
+    {
+      "palabra": "covid"
+    },
+    {
+      "palabra": "sentir"
+    },
+    {
+      "palabra": "oso"
+    },
+    {
+      "palabra": "piel"
+    },
+    {
+      "palabra": "carro"
+    },
+    {
+      "palabra": "atol"
+    },
+    {
+      "palabra": "elote"
+    },
+    {
+      "palabra": "lugar"
+    },
+    {
+      "palabra": "penny"
+    },
+    {
+      "palabra": "vos"
+    },
+    {
+      "palabra": "bocina"
+    },
+    {
+      "palabra": "estrella"
+    },
+    {
+      "palabra": "win"
+    }
+
+  ]
+
+}
