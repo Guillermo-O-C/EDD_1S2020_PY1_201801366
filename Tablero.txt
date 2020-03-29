@@ -1,82 +1,73 @@
 digraph G { 
  node[shape=box]
   root[label=raiz]
-  root -> X0
- root -> Y0
-X0 -> root
-X0 -> X1
-X0 -> C0F0
-X1 -> X0
-X1 -> X3
-X1 -> C1F0
-X3 -> X1
-X3 -> X4
-X3 -> C3F3
-X4 -> X3
-X4 -> X5
-X4 -> C4F3
-X5 -> X4
-X5 -> C5F3
+  root -> X0[constraint=false, dir=both];
+ root -> Y1[dir=both];
+X0 -> X2[dir=both, constraint=false];
+X0 -> C0F1[dir=both];
+X2 -> X4[dir=both, constraint=false];
+X2 -> C2F5[dir=both];
+X4 -> X6[dir=both, constraint=false];
+X4 -> C4F10[dir=both];
+X6 -> X10[dir=both, constraint=false];
+X6 -> C6F10[dir=both];
+X10 -> C10F15[dir=both];
 root[group=1];
-X0[group=1];
-X1[group=2];
-X3[group=4];
-X4[group=5];
-X5[group=6];
+X0[group=2];
+X2[group=4];
+X4[group=6];
+X6[group=8];
+X10[group=12];
 
-{rank =same;root;X0;X1;X3;X4;X5}
-Y0 -> C0F0
-Y0 -> root
-Y0 -> Y1
-C0F0 -> Y0
-C0F0 -> C1F0
-C0F0 -> X0
-C0F0 -> C0F1
-C1F0 -> C0F0
-C1F0 -> X1
-Y0[group=1];
-C0F0[group=1];
-C1F0[group=2];
-
-{rank =same;Y0;C0F0;C1F0}
-Y1 -> C0F1
-Y1 -> Y0
-Y1 -> Y3
-C0F1 -> Y1
-C0F1 -> C0F0
+{rank =same;root;X0;X2;X4;X6;X10}
+Y1 -> C0F1[dir=both, constraint=false];
+Y1 -> Y5[dir=both];
+C0F1 -> C0F15[dir=both];
 Y1[group=1];
-C0F1[group=1];
+C0F1[group=2];
 
 {rank =same;Y1;C0F1}
-Y3 -> C3F3
-Y3 -> Y1
-C3F3 -> Y3
-C3F3 -> C4F3
-C3F3 -> X3
-C4F3 -> C3F3
-C4F3 -> C5F3
-C4F3 -> X4
-C5F3 -> C4F3
-C5F3 -> X5
-Y3[group=1];
-C3F3[group=4];
-C4F3[group=5];
-C5F3[group=6];
+Y5 -> C2F5[dir=both, constraint=false];
+Y5 -> Y10[dir=both];
+Y5[group=1];
+C2F5[group=4];
 
-{rank =same;Y3;C3F3;C4F3;C5F3}
+{rank =same;Y5;C2F5}
+Y10 -> C4F10[dir=both, constraint=false];
+Y10 -> Y15[dir=both];
+C4F10 -> C6F10[dir=both,constraint=false];
+Y10[group=1];
+C4F10[group=6];
+C6F10[group=8];
+
+{rank =same;Y10;C4F10;C6F10}
+Y15 -> C0F15[dir=both, constraint=false];
+C0F15 -> C10F15[dir=both,constraint=false];
+Y15[group=1];
+C0F15[group=2];
+C10F15[group=12];
+
+{rank =same;Y15;C0F15;C10F15}
 X0[label="0"];
-X1[label="1"];
-X3[label="3"];
+X2[label="2"];
 X4[label="4"];
-X5[label="5"];
-Y0[label="0"];
-C0F0[label="D"];
-C1F0[label="O"];
+X6[label="6"];
+X10[label="10"];
 Y1[label="1"];
-C0F1[label="E"];
-Y3[label="3"];
-C3F3[label="M"];
-C4F3[label="I"];
-C5F3[label="A"];
+C0F1[label=" "];
+Y5[label="5"];
+C2F5[label=" "];
+Y10[label="10"];
+C4F10[label=" "];
+C6F10[label=" "];
+Y15[label="15"];
+C0F15[label=" "];
+C10F15[label=" "];
+C2F5[color=deepskyblue style=filled];
+C4F10[color=deepskyblue style=filled];
+C10F15[color=deepskyblue style=filled];
+C0F1[color=salmon2 style=filled];
+C6F10[color=salmon2 style=filled];
+C0F15[color=salmon2 style=filled];
 
 }

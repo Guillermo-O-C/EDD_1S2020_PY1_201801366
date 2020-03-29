@@ -8,5 +8,5 @@ digraph G {
 0;
 0[label="Mario Orellana"];
 1[label="Josue Orellana"];
-2[label="ok"];
+2[label="c"];
 }

@@ -47,12 +47,12 @@ Nodo<T> *MatrizDispersa<T>::BuscarEnY(int y){
     {
         if (auxiliar->getY() == y)
         {
-            cout<<"Sí existe la Fila"<<to_string(y)<<"\n";
+      //      cout<<"Sí existe la Fila"<<to_string(y)<<"\n";
             return auxiliar;
         }
         auxiliar = auxiliar->getDown();
     }
-    cout<<"No existe la Fila"<<to_string(y)<<"\n";
+  //  cout<<"No existe la Fila"<<to_string(y)<<"\n";
     return NULL;
     }
 template <class T>
@@ -62,12 +62,12 @@ Nodo<T> *MatrizDispersa<T>::BuscarEnX(int x){
     {
         if (auxiliar->getX() == x)
         {
-            cout<<"Sí existe la columna"<<to_string(x)<<"\n";
+         //   cout<<"Sí existe la columna"<<to_string(x)<<"\n";
             return auxiliar;
         }
         auxiliar = auxiliar->getNext();
     }
-    cout<<"No existe la columna"<<to_string(x)<<"\n";
+  //  cout<<"No existe la columna"<<to_string(x)<<"\n";
     return NULL;
     }
 template <class T>
@@ -106,11 +106,11 @@ Nodo<T> *MatrizDispersa<T>::InsertarOrdenadoColumna(Nodo<T> *nuevo, Nodo<T> *cab
         aux->getPrevious()->setNext(nuevo);
         nuevo->setPrevious(aux->getPrevious());
         aux->setPrevious(nuevo);
-        cout<<"nueva X"<<to_string(nuevo->getX())<<"\n";
+   //     cout<<"nueva X"<<to_string(nuevo->getX())<<"\n";
     }
     else
     {
-        cout<<"nueva X"<<to_string(nuevo->getX())<<"\n";
+   //     cout<<"nueva X"<<to_string(nuevo->getX())<<"\n";
         aux->setNext(nuevo);
         nuevo->setPrevious(aux);
     }
@@ -148,11 +148,11 @@ Nodo<T> *MatrizDispersa<T>::InsertarOrdenadoFila(Nodo<T> *nuevo, Nodo<T> *cabeza
         aux->getUp()->setDown(nuevo);
         nuevo->setUp(aux->getUp());
         aux->setUp(nuevo);
-        cout<<"nueva Y"<<to_string(nuevo->getY())<<"\n";
+     //   cout<<"nueva Y"<<to_string(nuevo->getY())<<"\n";
     }
     else
     {
-        cout<<"nueva Y"<<to_string(nuevo->getY())<<"\n";
+      //  cout<<"nueva Y"<<to_string(nuevo->getY())<<"\n";
         aux->setDown(nuevo);
         nuevo->setUp(aux);
     }

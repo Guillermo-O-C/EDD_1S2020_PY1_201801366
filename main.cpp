@@ -48,6 +48,7 @@ bool SameColumnNode(Nodo<Ficha> *nuevo, Nodo<Ficha> *cabezaColumna){
             if(Compare(aux->getValue(), nuevo->getValue())){
                     return true;
                 }
+			//creo que aca se tendría que poner el valor
         }
         else if (aux->getX() > nuevo->getX())
         {
@@ -128,35 +129,35 @@ string ImprimirTablero(MatrizDispersa<Ficha> *ma){
                 //imprimir derecha
 				content+=" root[label=raiz]\n ";
                 content+=" root -> X"+to_string(temp->getNext()->getX());
-				content+="\n";
+				content+="[constraint=false, dir=both];\n";
 				//imprimir abajo
 				content+=" root -> Y"+to_string(temp->getDown()->getY());
-				content+="\n";				
+				content+="[dir=both];\n";				
             }else if(temp->getY()==-1){//cabeza columnas
 				//content+= "pinting column head\n";
 				rankedLevel+=";X"+to_string(temp->getX());
                 labels+="X"+to_string(temp->getX())+"[label=\""+to_string(temp->getX())+"\"];\n";
-				nivelador+="X"+to_string(temp->getX())+"[group="+to_string(temp->getX()+1)+"];\n";
+				nivelador+="X"+to_string(temp->getX())+"[group="+to_string(temp->getX()+2)+"];\n";
               // cout<< temp->getX() <<"  " ; 
 			   //imprimir izquierda
-			   	if(temp->getPrevious()!=NULL){
+			  /* 	if(temp->getPrevious()!=NULL){
 					if(temp->getPrevious()->getX()==-1 && temp->getPrevious()->getY()==-1){
-						content+="X"+to_string(temp->getX())+" -> root";
-						content+="\n";
+						content+="X"+to_string(temp->getX())+" -> root[constraint=false]";
+						content+=";\n";
 					}else{
 						content+="X"+to_string(temp->getX())+" -> X"+to_string(temp->getPrevious()->getX());
-						content+="\n";
+						content+="[constraint=false];\n";
 					}
-			   	}
+			   	}*/
                 //imprimir derecha
 				if(temp->getNext()!=NULL){
 					content+="X"+to_string(temp->getX())+" -> X"+to_string(temp->getNext()->getX());
-					content+="\n";
+					content+="[dir=both, constraint=false];\n";
 				}
 				//imprimir abajo	
 				if(temp->getDown()!=NULL){
 					content+="X"+to_string(temp->getX())+" -> C"+to_string(temp->getDown()->getX())+"F"+to_string(temp->getDown()->getY());
-					content+="\n";
+					content+="[dir=both];\n";
 				}
             }else if(temp->getX()==-1){//cabeza filas
                 labels+="Y"+to_string(temp->getY())+"[label=\""+to_string(temp->getY())+"\"];\n";
@@ -167,59 +168,58 @@ string ImprimirTablero(MatrizDispersa<Ficha> *ma){
                 //imprimir derecha
 				if(temp->getNext()!=NULL){
 					content+="Y"+to_string(temp->getY())+" -> C"+ to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
-					content+="\n";
+					content+="[dir=both, constraint=false];\n";
 				}
 			    //imprimir arriba	
-				if(temp->getUp()!=NULL){
+			/*	if(temp->getUp()!=NULL){
 					if(temp->getUp()->getX()==-1 && temp->getUp()->getY()==-1){
 						content+="Y"+to_string(temp->getY())+" -> root";
-						content+="\n";
+						content+=";\n";
 					}else{
 						content+="Y"+to_string(temp->getY())+" -> Y"+to_string(temp->getUp()->getY());
-						content+="\n";
+						content+=";\n";
 					}
-				}	
+				}	*/
 				//imprimir abajo
 				if(temp->getDown()!=NULL){
 					content+="Y"+to_string(temp->getY())+" -> Y"+to_string(temp->getDown()->getY());
-					content+="\n";
+					content+="[dir=both];\n";
 				}	
             }else {//contenido de la matriz
                 labels+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+"[label=\""+temp->getValue().getChar()+"\"];\n";
 				rankedLevel+=";C"+to_string(temp->getX())+"F"+to_string(temp->getY());
-				nivelador+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+"[group="+to_string(temp->getX()+1)+"];\n";
+				nivelador+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+"[group="+to_string(temp->getX()+2)+"];\n";
 				//cout<<"contiene "+ temp->getValue()+"en ("<<to_string(temp->getX())+","+to_string(temp->getY())<<")";
              //  cout<< temp->getValue() <<" ";
 			    //imprimir izquierda
-				if(temp->getPrevious()!=NULL){
+			/*	if(temp->getPrevious()!=NULL){
 					if(temp->getPrevious()->getX()==-1){
-					//	content+="/*Izq de nodo cont*/"+to_string(temp->getPrevious()->getX())+","+to_string(temp->getPrevious()->getY());
-						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> Y"+to_string(temp->getPrevious()->getY());
-						content+="\n";
+					//	content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> Y"+to_string(temp->getPrevious()->getY());
+						content+="[constraint=false];\n";
 					}else{
 						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getPrevious()->getX())+"F"+to_string(temp->getPrevious()->getY());
-						content+="\n";
+						content+="[constraint=false];\n";
 					}
 				}
-                //imprimir derecha 
+               */ //imprimir derecha 
 				if(temp->getNext()!=NULL){
 					content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
-					content+="\n";
+					content+="[dir=both,constraint=false];\n";
 				}
-			    //imprimir arriba
+			 /*   //imprimir arriba
 				if(temp->getUp()!=NULL){
 					if(temp->getUp()->getY()==-1){
 						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> X"+to_string(temp->getUp()->getX());
-						content+="\n";
+						content+=";\n";
 					}else{
 						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getUp()->getX())+"F"+to_string(temp->getUp()->getY());
-						content+="\n";
+						content+=";\n";
 					}
-				}
+				}*/
 				//imprimir abajo
 				if(temp->getDown()!=NULL){
 					content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getDown()->getX())+"F"+to_string(temp->getDown()->getY());
-					content+="\n";
+					content+="[dir=both];\n";
 				}
             }            
             temp=temp->getNext();
@@ -230,7 +230,7 @@ string ImprimirTablero(MatrizDispersa<Ficha> *ma){
 			content+=rankedLevel+";e"+to_string(YRows-1)+"}\n";
 		}else{
 		}
-		*/
+		*/		
 		content+=rankedLevel+"}\n";
         auxiliar = auxiliar->getDown();
     }
@@ -244,6 +244,15 @@ string ImprimirTablero(MatrizDispersa<Ficha> *ma){
 	}
 	YLeveler+="[dir=none];";
 	*/
+	Nodo<Casillas> *aux = casillasEspeciales->GetCabeza();
+		for(int i =0;i<casillasEspeciales->GetSize();i++){
+			if(aux->getValue().getTipo()=="Doble"){
+				labels+="C"+to_string(aux->getValue().getX())+"F"+to_string(aux->getValue().getY())+"[color=deepskyblue style=filled];\n";
+			}else if(aux->getValue().getTipo()=="Triple"){
+				labels+="C"+to_string(aux->getValue().getX())+"F"+to_string(aux->getValue().getY())+"[color=salmon2 style=filled];\n";
+			}
+			aux=aux->getNext();
+		}
 	return content+labels+"\n}";
 	}
 string ImprimirMatriz(MatrizDispersa<string> *matriz){
@@ -532,6 +541,42 @@ void GraphDoubleList(ListaDoble<Ficha> *lista, ListaDoble<Ficha> *lista2){
     std::string filePath="dot -Tpng FichasEnJuego.txt -o FichasEnJuego.png";
     system(filePath.c_str());
 	}
+void ImprimirDiccionario(ListaDobleCircular<string> *lista){
+    std::string graph ("digraph ReporteLD { graph [dpi=300]\n rankdir =\"LR\"; \n size=\"5\" \n node [shape = box]; \n");
+    graph+="label = \"Diccionario\";\n";
+	Nodo<string> *aux = lista->GetCabeza();
+    Nodo<string> *previous = aux;
+    for(int i =0; i<lista->GetSize(); i++){
+        string number =  std::to_string(i);
+        string prevNumber = std::to_string((i-1));
+        //NULL pointers to the graph edges
+        if(i==0){
+           graph +=  to_string(i) + "-> " +std::string( to_string(lista->GetSize()-1) + ";\n");
+        }
+        //The rest of the nodes
+        else{
+            previous = aux;
+            aux=aux->getNext();
+            graph += std::string(prevNumber + " -> " +  number +";\n");
+            graph += std::string( number + " -> " + prevNumber +";\n");
+            if(i==lista->GetSize()-1){
+                    //graph +=  aux->getValue() + std::string( number + " -> _NULL;\n}");
+           			graph +=  to_string(lista->GetSize()-1) + "-> " +std::string( to_string(0) + ";\n");
+            }
+        }
+    	}
+	aux = lista->GetCabeza();
+	for(int i =0; i <lista->GetSize();i++){
+		graph+=to_string(i)+"[label="+aux->getValue()+"];\n";
+		aux=aux->getNext();
+		}    
+	ofstream graphFile;
+	graphFile.open("Diccionario.txt");
+    graphFile << graph+"}";
+    graphFile.close();
+    std::string filePath="dot -Tpng Diccionario.txt -o Diccionario.png";
+    system(filePath.c_str());
+	}
 void FichasEnJuego(){
 		GraphDoubleList(jugador1.getFichas(), jugador2.getFichas());
 	}
@@ -624,7 +669,7 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno){
 				}
 				return true;	
 			}else{
-				cout<<"no tienes lass fichas necesarias para esta palabra";
+				cout<<"no tienes las fichas necesarias para esta palabra";
 				return false;
 			}
 			break;	
@@ -658,6 +703,13 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno){
 				return false;
 			}
 			if(FichasNecesarias){
+				for(int i=0;i<palabra.length();i++){//y es la que tiene que ir creciendo
+					valor=palabra[i];
+					if(Tablero->CasillaOcupada(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y))//Verifico si la casilla está ocupada
+					{	
+						SameNode(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y);
+					}
+				}
 				for(int i=0;i<palabra.length();i++){//y es la que tiene que ir creciendo
 					valor=palabra[i];
 					if(!Tablero->CasillaOcupada(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y))//Verifico si la casilla está ocupada
@@ -817,9 +869,7 @@ void Jugar(){
 			if(Bolsa->Empty()){
 				break;
 				}
-				if(Bolsa->GetSize()<80){
-					UpdateTablero();
-				}
+				UpdateTablero();
 			}
 	}
 void EscogerJugadores(){
@@ -989,8 +1039,10 @@ void CargarArchivo(){
 	Nodo<Casillas> *aux = casillasEspeciales->GetCabeza();
 	for(int i=0;i<casillasEspeciales->GetSize();i++){
 		cout << to_string(aux->getValue().getX()) <<","<<to_string(aux->getValue().getY())<<endl;
+		Tablero->Insertar(Ficha(" ", 0),aux->getValue().getX(),aux->getValue().getY());
 		aux=aux->getNext();
 	}
+	ImprimirDiccionario(diccionario);
 	}
 void CrearJugador(){
 	string nombre;

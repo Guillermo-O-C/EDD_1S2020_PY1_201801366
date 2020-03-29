@@ -12,6 +12,7 @@ public:
     Ficha(string letraEspecial, int valor);
     string getChar();
     int getValor();
+    void setChar(string letra1);
 };
 Ficha::Ficha()
 {
@@ -26,4 +27,7 @@ string Ficha::getChar(){
 }
 int Ficha::getValor(){
     return this->valor;
+}
+void Ficha::setChar(string letra1){
+    this->letra=letra1;
 }

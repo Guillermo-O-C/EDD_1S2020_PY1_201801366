@@ -18,6 +18,7 @@ public:
     int getY();
     void setX(int x);
     void setY(int y);
+    string getTipo();
 };
 Casillas::Casillas(){
 
@@ -40,3 +41,14 @@ Casillas::Casillas(int x, int y, Casillas::Tipo tipo)
 	int Casillas::getY(){
 				return this->y;
 			}
+
+string Casillas::getTipo(){
+    switch(this->tipo){
+        case Casillas::Tipo::Doble:
+            return "Doble";
+            break;
+        case Casillas::Tipo::Triple:
+            return "Triple";
+            break;
+    }
+}
