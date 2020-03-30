@@ -10,17 +10,20 @@ private:
     string name;
     int ID;
 	ListaDoble<Ficha> *listaFichas;
+	int PunteoTemporal;
 
 public:
     jugadores()
 	{
 		this->name="";
 		this->listaFichas = new ListaDoble<Ficha>();
+		this->PunteoTemporal=0;
 	}
     jugadores(string name)
 	{
 		this->name=name;
 		this->listaFichas = new ListaDoble<Ficha>();
+		this->PunteoTemporal=0;
 	}
     string getName()
 	{
@@ -43,5 +46,13 @@ public:
 	}
 	ListaDoble<Ficha>* getFichas(){
 		return this->listaFichas;
+	}
+	int getPunteoTemporal()
+	{
+		return this->PunteoTemporal;
+	}
+    void setPunteoTemporal(int PunteoTemporal1)
+	{
+		this->PunteoTemporal = PunteoTemporal1;
 	}
 };

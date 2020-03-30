@@ -163,14 +163,14 @@ template <class T>
 Nodo<T>* MatrizDispersa<T>::CrearColumna(int x){
     Nodo<T> *nuevo = new Nodo<T>(this->NoValue, x, -1);
     Nodo<T> *Columna = InsertarOrdenadoColumna(nuevo, this->raiz);
-    cout<<Columna->getX()<<","<<Columna->getY()<<"\n";
+ //   cout<<Columna->getX()<<","<<Columna->getY()<<"\n";
     return Columna;
     }
 template <class T>
 Nodo<T>* MatrizDispersa<T>::CrearFila(int y){
     Nodo<T> *nuevo = new Nodo<T>(this->NoValue, -1, y);
     Nodo<T> *Fila = InsertarOrdenadoFila(nuevo, this->raiz);
-    cout<<Fila->getX()<<","<<Fila->getY()<<"\n";
+   // cout<<Fila->getX()<<","<<Fila->getY()<<"\n";
     return Fila;
     }
 template <class T>
@@ -427,7 +427,7 @@ Nodo<T>* MatrizDispersa<T>::FilaAt(Nodo<T> *nuevo, Nodo<T> *cabezaFila){
             {
                 nuevo->setX(aux->getX());
                 if(nuevo->getValue()==aux->getValue()){
-                    cout<<"Si es la misma ficha"<<endl;
+                    cout<<"Sí es la misma ficha"<<endl;
                 }
                 return nuevo;
             }

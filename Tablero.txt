@@ -2,45 +2,77 @@ digraph G {
  node[shape=box]
   root[label=raiz]
   root -> X0[constraint=false, dir=both];
- root -> Y1[dir=both];
-X0 -> X2[dir=both, constraint=false];
-X0 -> C0F1[dir=both];
-X2 -> X4[dir=both, constraint=false];
+ root -> Y0[dir=both];
+X0 -> X1[dir=both, constraint=false];
+X0 -> C0F0[dir=both];
+X1 -> X2[dir=both, constraint=false];
+X1 -> C1F0[dir=both];
+X2 -> X3[dir=both, constraint=false];
 X2 -> C2F5[dir=both];
-X4 -> X6[dir=both, constraint=false];
-X4 -> C4F10[dir=both];
+X3 -> X4[dir=both, constraint=false];
+X3 -> C3F4[dir=both];
+X4 -> X5[dir=both, constraint=false];
+X4 -> C4F4[dir=both];
+X5 -> X6[dir=both, constraint=false];
+X5 -> C5F10[dir=both];
 X6 -> X10[dir=both, constraint=false];
 X6 -> C6F10[dir=both];
 X10 -> C10F15[dir=both];
 root[group=1];
 X0[group=2];
+X1[group=3];
 X2[group=4];
+X3[group=5];
 X4[group=6];
+X5[group=7];
 X6[group=8];
 X10[group=12];
 
-{rank =same;root;X0;X2;X4;X6;X10}
+{rank =same;root;X0;X1;X2;X3;X4;X5;X6;X10}
+Y0 -> C0F0[dir=both, constraint=false];
+Y0 -> Y1[dir=both];
+C0F0 -> C1F0[dir=both,constraint=false];
+C0F0 -> C0F1[dir=both];
+Y0[group=1];
+C0F0[group=2];
+C1F0[group=3];
+
+{rank =same;Y0;C0F0;C1F0}
 Y1 -> C0F1[dir=both, constraint=false];
-Y1 -> Y5[dir=both];
+Y1 -> Y4[dir=both];
 C0F1 -> C0F15[dir=both];
 Y1[group=1];
 C0F1[group=2];
 
 {rank =same;Y1;C0F1}
+Y4 -> C3F4[dir=both, constraint=false];
+Y4 -> Y5[dir=both];
+C3F4 -> C4F4[dir=both,constraint=false];
+C3F4 -> C3F5[dir=both];
+C4F4 -> C4F10[dir=both];
+Y4[group=1];
+C3F4[group=5];
+C4F4[group=6];
+
+{rank =same;Y4;C3F4;C4F4}
 Y5 -> C2F5[dir=both, constraint=false];
 Y5 -> Y10[dir=both];
+C2F5 -> C3F5[dir=both,constraint=false];
 Y5[group=1];
 C2F5[group=4];
+C3F5[group=5];
 
-{rank =same;Y5;C2F5}
+{rank =same;Y5;C2F5;C3F5}
 Y10 -> C4F10[dir=both, constraint=false];
 Y10 -> Y15[dir=both];
-C4F10 -> C6F10[dir=both,constraint=false];
+C4F10 -> C5F10[dir=both,constraint=false];
+C5F10 -> C6F10[dir=both,constraint=false];
 Y10[group=1];
 C4F10[group=6];
+C5F10[group=7];
 C6F10[group=8];
 
-{rank =same;Y10;C4F10;C6F10}
+{rank =same;Y10;C4F10;C5F10;C6F10}
 Y15 -> C0F15[dir=both, constraint=false];
 C0F15 -> C10F15[dir=both,constraint=false];
 Y15[group=1];
@@ -49,16 +81,27 @@ C10F15[group=12];
 
 {rank =same;Y15;C0F15;C10F15}
 X0[label="0"];
+X1[label="1"];
 X2[label="2"];
+X3[label="3"];
 X4[label="4"];
+X5[label="5"];
 X6[label="6"];
 X10[label="10"];
+Y0[label="0"];
+C0F0[label="D"];
+C1F0[label="E"];
 Y1[label="1"];
-C0F1[label=" "];
+C0F1[label="E"];
+Y4[label="4"];
+C3F4[label="S"];
+C4F4[label="I"];
 Y5[label="5"];
-C2F5[label=" "];
+C2F5[label="S"];
+C3F5[label="I"];
 Y10[label="10"];
-C4F10[label=" "];
+C4F10[label="D"];
+C5F10[label="E"];
 C6F10[label=" "];
 Y15[label="15"];
 C0F15[label=" "];
