@@ -1,7 +1,6 @@
 //System Needs
 	#include <fstream>
 	#include <typeinfo>
-	#include <ncurses.h>
 	#include <random>
 	#include "json.hpp"
 	using json = nlohmann::json;
@@ -22,12 +21,12 @@
 	ABB *arbol =  new ABB();
 	ListaSimple<Casillas> *casillasEspeciales = new ListaSimple<Casillas>();
 	ListaSimple<jugadores> *JugadoresOrdenados;
-	ListaDobleCircular<string> *diccionario = new ListaDobleCircular<string>();
+	ListaDobleCircular<string> *diccionario = new ListaDobleCircular<string>;
 	Cola<Ficha> *Bolsa = new Cola<Ficha>();
 	MatrizDispersa<Ficha> *Tablero = new MatrizDispersa<Ficha>(Ficha("-", 0));
 	int DimensionTablero, punteoJugador1, punteoJugador2;
 	jugadores jugador1, jugador2;
-	bool ganador, Insertar, UpdateCasilla, Vacio;
+	bool ganador, Insertar, UpdateCasilla, Vacio, Iniciado, ArchivoEntrada;
 //Métodos de acceso a EDD
 bool Compare(Ficha creada, Ficha nueva){
 	if(creada.getChar()==" "){
@@ -40,7 +39,7 @@ bool Compare(Ficha creada, Ficha nueva){
 		return true;
 	}
 	if(creada.getChar()==nueva.getChar()){
-		cout<<creada.getChar()<<"="<<nueva.getChar()<<endl;
+	//	cout<<creada.getChar()<<"="<<nueva.getChar()<<endl;
 		return true;
 	} 
 		cout<<creada.getChar()<<"!="<<nueva.getChar()<<endl;
@@ -486,7 +485,7 @@ void PrintPlayers(){
 	 JugadoresOrdenados = new ListaSimple<jugadores>();
 	 RecorrerArbol(arbol->GetRoot(), JugadoresOrdenados);
 	 for(int i=0;i<JugadoresOrdenados->GetSize();i++){
-		 cout<<to_string(i)<<". "<< JugadoresOrdenados->ElementAt(i)->getValue().getName()<<endl;
+		 cout<<to_string(i+1)<<". "<< JugadoresOrdenados->ElementAt(i)->getValue().getName()<<endl;
 	 }
 	}
 void GraphDoubleList(ListaDoble<Ficha> *lista, ListaDoble<Ficha> *lista2){
@@ -558,8 +557,30 @@ int SacarFicha(jugadores enTurno, string letra){
 		}
 	}
 	}
+void ImprimirBolsa(){
+	Nodo<Ficha> *aux = Bolsa->ReturnTop();
+	std::string graph ("digraph ReporteLD { graph [dpi=1000]\n rankdir =\"TB\"; \n size=\"5\" \n node [shape = box]; \n");
+	string labels;
+	int i=0;
+	while(aux!=NULL){
+		labels+=to_string(i)+"[label=\""+aux->getValue().getChar()+" x "+to_string(aux->getValue().getValor())+"pts\"];\n";
+		if(aux->getNext()!=NULL){
+			graph+=to_string(i)+"->";
+		}else{
+			graph+=to_string(i)+";\n";
+		}
+		aux=aux->getNext();
+		i++;
+	}
+	ofstream graphFile;
+	graphFile.open("ColaDeFichas.txt");
+    graphFile << graph+labels+"\n}";
+    graphFile.close();
+    std::string filePath="dot -Tpng ColaDeFichas.txt -o ColaDeFichas.png";
+    system(filePath.c_str());
+	}
 void ImprimirDiccionario(ListaDobleCircular<string> *lista){
-    std::string graph ("digraph ReporteLD { graph [dpi=300]\n rankdir =\"LR\"; \n size=\"5\" \n node [shape = box]; \n");
+    std::string graph ("digraph ReporteLD { graph [dpi=1000]\n rankdir =\"LR\"; \n size=\"5\" \n node [shape = box]; \n");
     graph+="label = \"Diccionario\";\n";
 	Nodo<string> *aux = lista->GetCabeza();
     Nodo<string> *previous = aux;
@@ -634,6 +655,43 @@ void UpdateTablero(){
     graphFile.close();
     std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
     system(filePath.c_str());
+	}
+void InsertarOrdenado(jugadores jugador, int puntaje){
+	Nodo<int> *aux = jugador.getScores()->GetCabeza();
+	if(aux==NULL){
+		jugador.getScores()->Insertar(puntaje);
+	}else{
+		int i=0;
+		while(puntaje<=aux->getValue()){
+		//	cout<<to_string(puntaje)<<" < "<<aux->getValue()<<endl;
+			i++;
+			if(aux->getNext()!=NULL){
+				aux=aux->getNext();				
+			}else{
+				break;
+			}
+		}
+	//	cout<<to_string(puntaje)<<" se debe ingresar antes de "<<aux->getValue()<<endl;		
+		jugador.getScores()->InsertBefore(puntaje, i);	
+	}
+	}
+void PrintBestScores(){
+	ListaSimple<jugadores> *temporal = new ListaSimple<jugadores>();
+	RecorrerArbol(arbol->GetRoot(), temporal);
+	Nodo<jugadores> *temp = temporal->GetCabeza();
+	int i=0;
+	while(temp!=NULL){
+		cout<<to_string(i)<<". "<<temp->getValue().getName()<<"-----";
+		if(temp->getValue().getScores()->GetCabeza()!=NULL){
+			cout<<temp->getValue().getScores()->GetCabeza()->getValue()<<endl;
+		}else{
+			cout<<"no ha jugado ninuguna partida."<<endl;
+		}
+		temp=temp->getNext();
+	}
+	}
+void PrintBestPersonalScores(){
+
 	}
 int CasillaEspecial(int x, int y){
 	Nodo<Casillas> *aux = casillasEspeciales->GetCabeza();
@@ -734,14 +792,14 @@ int AdicionarPunteo(string letra, int x, int y){
 	valorletra=valorletra*CasillaEspecial(x, y);
 
 	return valorletra;
-}
+	}
 bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno, int *PunteoJugador){
 	//cout<<"Ingresar Palabra "<<palabra<< "Verticalmente";
 	string valor="";
-	bool FichasNecesarias;
-	bool puedoInsertar;
+	bool FichasNecesarias, puedoInsertar, Conectado;
 	Nodo<Ficha> *aux;
 	ListaSimple<Ficha> *Necesarias;
+		Conectado=false;
 		switch (VoH)
 		{
 		case 1://Ingreso Vertical
@@ -751,10 +809,13 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno, i
 				valor=palabra[i];
 				if(Tablero->CasillaOcupada(Ficha(valor, ValorDeFicha(valor, enTurno)), x, y+i))//Verifico si la casilla está ocupada
 				{	
-					cout<<"comparando "<<valor<<" la ficha que está puesta"<<endl;
+				//	cout<<"comparando "<<valor<<" la ficha que está puesta"<<endl;
 					Insertar=false;
 					if(SameNode(Ficha(valor, ValorDeFicha(valor, enTurno)), x, y+i)){
-						cout<<"La ficha es la misma"<<endl;
+						if(Iniciado){
+							Conectado=true;
+						}
+					//	cout<<"La ficha es la misma"<<endl;
 						if(Insertar){
 							Necesarias->Insertar(Ficha(valor, ValorDeFicha(valor, enTurno)));
 							Insertar=false;
@@ -777,7 +838,7 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno, i
 					}
 				}
 			}else{
-				cout<<"La palabra no puede ser incertada en esa posición";
+				cout<<"La palabra no puede ser incertada en esa posición"<<endl;
 				return false;
 			}
 			UpdateCasilla=FichasNecesarias;
@@ -789,8 +850,11 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno, i
 				aux=aux->getNext();
 			}
 			cout<<endl;
-
+			if(Bolsa->GetSize()>80){
+				Conectado=true;
+				}
 			if(FichasNecesarias){
+				if(Conectado){
 				for(int i=0;i<palabra.length();i++){//y es la que tiene que ir creciendo
 					valor=palabra[i];
 					if(!Tablero->CasillaOcupada(Ficha(valor, ValorDeFicha(valor, enTurno)), x, y+i))//Verifico si la casilla está ocupada
@@ -811,8 +875,12 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno, i
 				}
 				UpdateCasilla=false;
 				return true;	
+				}else{
+					cout<<"La palabra no está conectada con las demás"<<endl;
+					return false;
+				}
 			}else{
-				cout<<"no tienes las fichas necesarias para esta palabra"<<endl;
+				cout<<"No tienes las fichas necesarias para esta palabra"<<endl;
 				return false;
 			}
 			break;	
@@ -820,14 +888,17 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno, i
 		case 2://Ingreso Horizonal
 			puedoInsertar=true;
 			Necesarias = new ListaSimple<Ficha>();
-			for(int i=0;i<palabra.length();i++){//y es la que tiene que ir creciendo
+			for(int i=0;i<palabra.length();i++){//x es la que tiene que ir creciendo
 				valor=palabra[i];
 				if(Tablero->CasillaOcupada(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y))//Verifico si la casilla está ocupada
 				{	
 					Insertar=false;
-					cout<<"comparando "<<valor<<" la ficha que está puesta"<<endl;
+				//	cout<<"comparando "<<valor<<" la ficha que está puesta"<<endl;
 					if(SameNode(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y)){
-						cout<<"La ficha es la misma"<<endl;
+						if(Iniciado){
+								Conectado=true;
+							}
+					//	cout<<"La ficha es la misma"<<endl;
 						if(Insertar){
 							Necesarias->Insertar(Ficha(valor, ValorDeFicha(valor, enTurno)));
 							Insertar=false;
@@ -865,35 +936,41 @@ bool InsertarTablero(string palabra, int x, int y, int VoH, jugadores enTurno, i
 
 
 			if(FichasNecesarias){
-				for(int i=0;i<palabra.length();i++){//y es la que tiene que ir creciendo
-					valor=palabra[i];
-					if(!Tablero->CasillaOcupada(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y))//Verifico si la casilla está ocupada
-					{	
-						Tablero->Insertar(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y);
-						enTurno.getFichas()->SacarElemento(SacarFicha(enTurno, valor));
-					}else
-					{
-						if(SameNode(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y)){
-							if(Vacio){
-								Tablero->UpdateCasilla(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y);
-								enTurno.getFichas()->SacarElemento(SacarFicha(enTurno, valor));
-							}
+				if(Conectado || Bolsa->GetSize()>80){
+					for(int i=0;i<palabra.length();i++){//x es la que tiene que ir creciendo
+						valor=palabra[i];
+						if(!Tablero->CasillaOcupada(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y))//Verifico si la casilla está ocupada
+						{	
+							Tablero->Insertar(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y);
+							enTurno.getFichas()->SacarElemento(SacarFicha(enTurno, valor));
+						}else
+						{
+							if(SameNode(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y)){
+								if(Vacio){
+									Tablero->UpdateCasilla(Ficha(valor, ValorDeFicha(valor, enTurno)), x+i, y);
+									enTurno.getFichas()->SacarElemento(SacarFicha(enTurno, valor));
+								}
+								
 							Vacio=false;
 						}
 					}
 					*PunteoJugador+=AdicionarPunteo(valor, x+i, y);
 				}
 				UpdateCasilla=false;
-				return true;	
+					return true;
+				}else{
+					cout<<"La palabra no está conectada con las demás"<<endl;
+					return false;
+				}
 			}else{
-				cout<<"no tienes las fichas necesarias para esta palabra"<<endl;
+				cout<<"No tienes las fichas necesarias para esta palabra"<<endl;
 				return false;
 			}
 			break;			
 		}
 	}
 void RellenarFichero(jugadores enTurno){
-	cout<<enTurno.getName()<<" tiene "<<to_string(enTurno.getFichas()->GetSize())<<" fichas"<<endl; 
+	//	cout<<enTurno.getName()<<" tiene "<<to_string(enTurno.getFichas()->GetSize())<<" fichas"<<endl; 
 	while(enTurno.getFichas()->GetSize()<7){
 		enTurno.getFichas()->Insertar(Bolsa->Desencolar()->getValue());
 	}
@@ -908,30 +985,34 @@ void DevolverFichas(jugadores enTurno){
 			cout<<to_string(i+1)+". "+aux->getValue().getChar()<<endl;
 			aux=aux->getNext();
 		}
-		cout<<"Introduce el número de la ficha que deseas devolver: ";
+		cout<<"Introduce el número de la ficha que deseas devolver: "<<endl;
 		int fichaID;
 		cin>>fichaID;
-		//reintroducir ficha
-		int posicionNueva = rand() % Bolsa->GetSize();
-		Nodo<Ficha> *devuelto = enTurno.getFichas()->SacarElemento(fichaID-1);
-		if(devuelto!=NULL){
-			cout<<"la bolsa tenía "<<Bolsa->GetSize()<<endl;
-			Bolsa->InsertAt(devuelto->getValue(),posicionNueva);
-			cout<<"ahora tiene "<<Bolsa->GetSize()<<endl;
-		}else{
-			cout<<"No se pudo sacar la ficha de la posición indicada"<<endl;
-		}
-		int decision;
-		cout<<"Se ha devuelto la ficha "+devuelto->getValue().getChar()+", deseas devolver otra ficha?\n 1.Si \n2.No"<<endl;
-		cin>>decision;
-		if(decision==1){
-			DevolverFichas(enTurno);
-		}else{
-			//terminó su turno
-		}
-		}else{
-			cout<<enTurno.getName()+" ya no tienes fichas"<<endl;
-		}
+		if(fichaID<=enTurno.getFichas()->GetSize() && fichaID>0){
+			//reintroducir ficha
+			int posicionNueva = rand() % Bolsa->GetSize();
+			Nodo<Ficha> *devuelto = enTurno.getFichas()->SacarElemento(fichaID-1);
+			if(devuelto!=NULL){
+				//	cout<<"la bolsa tenía "<<Bolsa->GetSize()<<endl;
+					Bolsa->InsertAt(devuelto->getValue(),posicionNueva);
+				//	cout<<"ahora tiene "<<Bolsa->GetSize()<<endl;
+				}else{
+					cout<<"No se pudo sacar la ficha de la posición indicada"<<endl;
+				}
+				int decision;
+				cout<<"Se ha devuelto la ficha "+devuelto->getValue().getChar()+", deseas devolver otra ficha?\n 1.Si \n2.No"<<endl;
+				cin>>decision;
+				if(decision==1){
+					DevolverFichas(enTurno);
+				}else{
+					//terminó su turno
+				}
+			}else{
+				cout<<"La posición ingresada no es válida"<<endl;
+			}
+	}else{
+		cout<<enTurno.getName()+" ya no tienes fichas"<<endl;
+	}
 	
 	}
 void Turno(jugadores enTurno, int *PunteoJugador){
@@ -940,22 +1021,23 @@ void Turno(jugadores enTurno, int *PunteoJugador){
 	cin>>x;
 	cout<<enTurno.getName() <<" el valor de y donde comenzará tu palabra"<<endl;
 	cin>>y;
-	cout<<enTurno.getName() <<" Escoge la opción que desees\n 1. Ingresar Vertical\n 2. Ingresar Horizontal"<<endl;
-	cin>>VoH;
-	if(x>DimensionTablero || y >DimensionTablero){
-		cout<<"La posición ("+to_string(x)+","+to_string(y)+") no está dentro del rango del tablero, pierdes tu turno"<<endl;
+	if(x>DimensionTablero || y >DimensionTablero || x<0 || y<0){
+		cout<<"La posición ("+to_string(x)+","+to_string(y)+") no está dentro del rango del tablero."<<endl;
 	}else{
+		cout<<enTurno.getName() <<" escoge la opción que desees\n 1. Ingresar Vertical\n 2. Ingresar Horizontal"<<endl;
+		cin>>VoH;
 		string palabra;
-		cout<<"Introduce la palabra **Recuerda que es Case Sensitive"<<endl;
+		cout<<"Introduce la palabra"<<endl;
 		cin>>palabra;
+		transform(palabra.begin(), palabra.end(), palabra.begin(), ::toupper);
 		if(x+palabra.length()>DimensionTablero || y+palabra.length()>DimensionTablero){			
-			cout<<"La palabra no cabe en el tablero, pierdes tu turno"<<endl;
+			cout<<"La palabra no cabe en el tablero."<<endl;
 		}else{
 			if(PalabraExistente(palabra)){
 				//TieneEstaFicha(enTurno, palabra);
 				InsertarTablero(palabra, x, y, VoH, enTurno, PunteoJugador);
 			}else{
-				cout<<"La palabra no es parte del lenguaje, pierdes tu turno"<<endl;
+				cout<<"La palabra no es parte del lenguaje."<<endl;
 			}
 		}
 	}
@@ -974,7 +1056,7 @@ void Jugar(){
 		ganador=false;
 		bool SuTurno;//Si es true empieza el jugador 1
 		int azar =rand() % 2;
-		int Accion;
+		int Accion;		
 		switch (azar)
 			{
 			case 0:
@@ -986,60 +1068,68 @@ void Jugar(){
 				break;
 			}
 		while(!ganador){
-			if(SuTurno)//Turno del jugador 1
-			{
-				cout<< jugador1.getName()+" selecciona la acción que desees realizar\n 1."+
-											" Jugar Turno\n2. Cambiar Fichas\n3. Terminar Partida"<<endl;
-				cin>>Accion;
-				switch (Accion)
-				{
-				case 1:
-					Turno(jugador1, &punteoJugador1);
-					cout<<"Tu punteo al termiar tu turno es "<<to_string(punteoJugador1)<<endl;
-					break;				
-				case 2:
-					DevolverFichas(jugador1);
-					break;
-				case 3:
-					ganador=true;
-					break;
-				default:
-					cout<<"No es una opción válida, pierdes tu turno"<<endl;
-					break;
-				}
-				cout<<"Fin del trueno de "+jugador1.getName()<<endl<<endl;
-				RellenarFichero(jugador1);
-				SuTurno=false;
-			}else{//Turno del jugador 2
-				cout<< jugador2.getName()+" selecciona la acción que desees realizar\n 1."+
-											" Jugar Turno\n2. Cambiar Fichas\n3. Terminar Partida"<<endl;
-				cin>>Accion;
-				switch (Accion)
-				{
-				case 1:
-					Turno(jugador2, &punteoJugador2);
-					cout<<"Tu punteo al termiar tu turno es "<<to_string(punteoJugador2)<<endl;
-					break;				
-				case 2:
-					DevolverFichas(jugador2);
-					break;
-				case 3:
-					ganador=true;
-					break;
-				default:
-					cout<<"No es una opción válida, pierdes tu turno"<<endl;
-					break;
-				}
-				cout<<"Fin del trueno de "+jugador2.getName()<<endl<<endl;
-				RellenarFichero(jugador2);
-				SuTurno=true;
+			ImprimirBolsa();
+			if(Bolsa->GetSize()<80){
+				Iniciado=true;
+			}else{
+				Iniciado=false;
 			}
-			if(Bolsa->Empty()){
-				break;
+				if(SuTurno)//Turno del jugador 1
+				{
+					cout<< jugador1.getName()+" selecciona la acción que desees realizar\n1."+
+												"Jugar Turno\n2. Cambiar Fichas\n3. Terminar Partida"<<endl;
+					cin>>Accion;
+					switch (Accion)
+					{
+					case 1:
+						Turno(jugador1, &punteoJugador1);
+					//	cout<<"Tu punteo al termiar tu turno es "<<to_string(punteoJugador1)<<endl;
+						break;				
+					case 2:
+						DevolverFichas(jugador1);
+						break;
+					case 3:
+						ganador=true;
+						break;
+					default:
+						cout<<"No es una opción válida, pierdes tu turno"<<endl;
+						break;
+					}
+					cout<<"Fin del trueno de "+jugador1.getName()<<endl<<endl;
+					RellenarFichero(jugador1);
+					SuTurno=false;
+				}else{//Turno del jugador 2
+					cout<< jugador2.getName()+" selecciona la acción que desees realizar\n1."+
+												"Jugar Turno\n2. Cambiar Fichas\n3. Terminar Partida"<<endl;
+					cin>>Accion;
+					switch (Accion)
+					{
+					case 1:
+						Turno(jugador2, &punteoJugador2);
+					//	cout<<"Tu punteo al termiar tu turno es "<<to_string(punteoJugador2)<<endl;
+						break;				
+					case 2:
+						DevolverFichas(jugador2);
+						break;
+					case 3:
+						ganador=true;
+						break;
+					default:
+						cout<<"No es una opción válida, pierdes tu turno"<<endl;
+						break;
+					}
+					cout<<"Fin del trueno de "+jugador2.getName()<<endl<<endl;
+					RellenarFichero(jugador2);
+					SuTurno=true;
 				}
-				UpdateTablero();
+				if(Bolsa->Empty()){
+					break;
+					}
+					UpdateTablero();
 			}
-	}
+		InsertarOrdenado(jugador1, punteoJugador1);
+		InsertarOrdenado(jugador2, punteoJugador2);
+		}
 void EscogerJugadores(){
     system("clear");
 	PrintPlayers();
@@ -1050,10 +1140,14 @@ void EscogerJugadores(){
 	cin>>player2;
 	if(player1==player2){
 		cout<<"No puedes escoger 2 veces al mismo jugador";
+	}else if(player1>JugadoresOrdenados->GetSize() || player1<=0){
+		cout<<"Error, "<<to_string(player1)<<" no es una opción válida."<<endl;
+	}else if(player2>JugadoresOrdenados->GetSize()|| player2<=0){
+		cout<<"Error, "<<to_string(player2)<<" no es una opción válida."<<endl;
 	}else{
-		jugador1=JugadoresOrdenados->ElementAt(player1)->getValue();
-		jugador2=JugadoresOrdenados->ElementAt(player2)->getValue();
-		cout<<"jugador1: "<<jugador1.getName()<<" jugador2: "<<jugador2.getName()<<endl;
+		jugador1=JugadoresOrdenados->ElementAt(player1-1)->getValue();
+		jugador2=JugadoresOrdenados->ElementAt(player2-1)->getValue();
+		cout<<"Jugador 1: "<<jugador1.getName()<<" Jugador 2: "<<jugador2.getName()<<endl;
 		Jugar();
 	}
 	}
@@ -1180,37 +1274,42 @@ void LlenarCola(){
 void CargarArchivo(){
 	string nombre;
 	cin>>nombre;
-	ifstream ifs(nombre);
-	json j3;
-	ifs >> j3;
-	cout << j3.at("dimension")<<endl;
-	DimensionTablero =  j3.at("dimension").get<int>();
-	for(int i = 0; i< j3.at("casillas").at("dobles").size();i++){
-		cout <<  j3.at("casillas").at("dobles")[i].at("x").get<int>()<<",";
-		cout <<  j3.at("casillas").at("dobles")[i].at("y").get<int>()<<endl;
-		casillasEspeciales->Insertar( Casillas(j3.at("casillas").at("dobles")[i].at("x").get<int>(),
-		 j3.at("casillas").at("dobles")[i].at("y").get<int>(), Casillas::Tipo::Doble));
-	}
-	for(int i = 0; i< j3.at("casillas").at("triples").size();i++){
-		cout <<  j3.at("casillas").at("triples")[i].at("x").get<int>()<<",";
-		cout <<  j3.at("casillas").at("triples")[i].at("y").get<int>()<<endl;
-		casillasEspeciales->Insertar(Casillas(j3.at("casillas").at("triples")[i].at("x").get<int>(),j3.at("casillas").at("triples")[i].at("y").get<int>(),
-		 							 Casillas::Tipo::Triple));
-	}
-	for(int i = 0; i< j3.at("diccionario").size();i++){
-		cout <<  j3.at("diccionario")[i].at("palabra") <<endl;
-		string palabra = j3.at("diccionario")[i].at("palabra");
-		transform(palabra.begin(), palabra.end(), palabra.begin(), ::toupper);
-		diccionario->Insertar(palabra);
-	}
+	try{
+		ifstream ifs(nombre);
+		json j3;
+		ifs >> j3;
+		cout << j3.at("dimension")<<endl;
+		DimensionTablero =  j3.at("dimension").get<int>();
+		for(int i = 0; i< j3.at("casillas").at("dobles").size();i++){
+			cout <<  j3.at("casillas").at("dobles")[i].at("x").get<int>()<<",";
+			cout <<  j3.at("casillas").at("dobles")[i].at("y").get<int>()<<endl;
+			casillasEspeciales->Insertar( Casillas(j3.at("casillas").at("dobles")[i].at("x").get<int>(),
+			j3.at("casillas").at("dobles")[i].at("y").get<int>(), Casillas::Tipo::Doble));
+		}
+		for(int i = 0; i< j3.at("casillas").at("triples").size();i++){
+			cout <<  j3.at("casillas").at("triples")[i].at("x").get<int>()<<",";
+			cout <<  j3.at("casillas").at("triples")[i].at("y").get<int>()<<endl;
+			casillasEspeciales->Insertar(Casillas(j3.at("casillas").at("triples")[i].at("x").get<int>(),j3.at("casillas").at("triples")[i].at("y").get<int>(),
+										Casillas::Tipo::Triple));
+		}
+		for(int i = 0; i< j3.at("diccionario").size();i++){
+			cout <<  j3.at("diccionario")[i].at("palabra") <<endl;
+			string palabra = j3.at("diccionario")[i].at("palabra");
+			transform(palabra.begin(), palabra.end(), palabra.begin(), ::toupper);
+			diccionario->Insertar(palabra);
+		}
 
-	Nodo<Casillas> *aux = casillasEspeciales->GetCabeza();
-	for(int i=0;i<casillasEspeciales->GetSize();i++){
-		cout << to_string(aux->getValue().getX()) <<","<<to_string(aux->getValue().getY())<<endl;
-		Tablero->Insertar(Ficha(" ", 0),aux->getValue().getX(),aux->getValue().getY());
-		aux=aux->getNext();
+		Nodo<Casillas> *aux = casillasEspeciales->GetCabeza();
+		for(int i=0;i<casillasEspeciales->GetSize();i++){
+			cout << to_string(aux->getValue().getX()) <<","<<to_string(aux->getValue().getY())<<endl;
+			Tablero->Insertar(Ficha(" ", 0),aux->getValue().getX(),aux->getValue().getY());
+			aux=aux->getNext();
+		}
+		ImprimirDiccionario(diccionario);
+		ArchivoEntrada=true;
+	}catch(exception& e){
+		cout<<"No se encontró el archivo."<<endl;
 	}
-	ImprimirDiccionario(diccionario);
 	}
 void CrearJugador(){
 	string nombre;
@@ -1221,19 +1320,32 @@ void CrearJugador(){
 		arbol->Imprimir();
 	}else{
 		cout<<"El jugador ya existe\n";
+	}	
 	}
-	char c = getch();	
+void IniciarEDD(){
+	Tablero = new MatrizDispersa<Ficha>(Ficha("-", 0));
+	Bolsa = new Cola<Ficha>();
+	casillasEspeciales= new ListaSimple<Casillas>();
+	diccionario= new ListaDobleCircular<string>();
 	}
 void Menu(){
-	cout <<"\nBienvenido a Scrabble++\n"<<endl<<"Escoje la opción que deseas ejecutar:\n1.Jugar\n2.Crear Jugador\n3.Cargar Archivo\n";
+	//IniciarEDD();
+	cout <<"\nBienvenido a Scrabble++\n"<<endl<<"Escoje la opción que deseas ejecutar:\n1.Jugar"
+												<<"\n2.Crear Jugador\n3.Cargar Archivo\n4.Score Borad\n"
+												<<"5.Historial de Puntajes\n";
 	int opcion;
 	cin>>opcion;
 	switch (opcion)
 	{
 	case 1:
-		LlenarCola();
-		EscogerJugadores();
-		Menu();
+		if(ArchivoEntrada){
+			LlenarCola();
+			EscogerJugadores();
+			Menu();
+		}else{
+			cout<<"/-/-/-/-/-ERROR-/-/-/-/-/\nNo se ha cargado ningún archivo de entrada.";
+			Menu();
+		}		
 		break;
 	case 2:
     	system("clear");
@@ -1241,8 +1353,32 @@ void Menu(){
 		Menu();
 		break;
 	case 3:
-    	system("clear");
+    	system("clear");		
 		CargarArchivo();
+		Menu();
+		break;
+	case 4:
+		system("clear");
+		try{
+		 PrintBestScores();
+		}catch(exception e){
+			cout<<"No se pueden imprimir los puntajes";
+		}
+		Menu();
+		break;
+	case 5:	
+		system("clear");
+		PrintPlayers();
+		cout<<"Ingresa el número del jugador del cual deseas conocer el historial de puntajes"<<endl;
+		int opcion;
+		cin>>opcion;
+		if(opcion<=JugadoresOrdenados->GetSize() && opcion>0){
+			jugadores player = JugadoresOrdenados->ElementAt(opcion-1)->getValue();
+			cout<<"Los puntajes de "<<player.getName()<<" son:"<<endl;
+			for(int i =0;i< player.getScores()->GetSize();i++){
+				cout<<to_string(i+1)<<". "<<to_string(player.getScores()->ElementAt(i)->getValue())<<endl;
+			}
+		}
 		Menu();
 		break;
 	default:
@@ -1256,80 +1392,88 @@ void Menu(){
 
 int main(int argc, char ** argv){
 	/*
-    MatrizDispersa<string> *matriz = new MatrizDispersa<string>("putas");
-	matriz->Insertar("buenas", 0, 3);
-	matriz->Insertar("tardes", 0, 2);
-	matriz->ImprimirMatriz();
-	matriz->Insertar("amigos", 1, 2);
-	matriz->Insertar("mios", 4, 2);
-	matriz->Insertar("si", 0, 0);*/
-	/*
-	//---------------------------Codigo Para incerción de fichas----------------------------
-	Tablero->Insertar(Ficha("H", 1), 0, 0);
-	Tablero->Insertar(Ficha("O", 1), 0, 1);
-	Tablero->Insertar(Ficha("L", 1), 0, 2);
-	Tablero->Insertar(Ficha("A", 1), 0, 3);
-	Tablero->Insertar(Ficha("S", 1), 1, 1);
-	Tablero->Insertar(Ficha("O", 1), 2, 1);
-	if(!Tablero->Insertar(Ficha("K", 1), 1, 0)){
-		cout<<"No se ingresó la ficha, porque ya está ocupada esa casilla"<<endl;
-		if(Tablero->SameNode(Ficha("K", 1), 1, 0)){
-			cout<<"La ficha es la misma"<<endl;
-		}else{
-			cout<<"La ficha NO es la misma"<<endl;
+		MatrizDispersa<string> *matriz = new MatrizDispersa<string>("putas");
+		matriz->Insertar("buenas", 0, 3);
+		matriz->Insertar("tardes", 0, 2);
+		matriz->ImprimirMatriz();
+		matriz->Insertar("amigos", 1, 2);
+		matriz->Insertar("mios", 4, 2);
+		matriz->Insertar("si", 0, 0);*/
+		/*
+		//---------------------------Codigo Para incerción de fichas----------------------------
+		Tablero->Insertar(Ficha("H", 1), 0, 0);
+		Tablero->Insertar(Ficha("O", 1), 0, 1);
+		Tablero->Insertar(Ficha("L", 1), 0, 2);
+		Tablero->Insertar(Ficha("A", 1), 0, 3);
+		Tablero->Insertar(Ficha("S", 1), 1, 1);
+		Tablero->Insertar(Ficha("O", 1), 2, 1);
+		if(!Tablero->Insertar(Ficha("K", 1), 1, 0)){
+			cout<<"No se ingresó la ficha, porque ya está ocupada esa casilla"<<endl;
+			if(Tablero->SameNode(Ficha("K", 1), 1, 0)){
+				cout<<"La ficha es la misma"<<endl;
+			}else{
+				cout<<"La ficha NO es la misma"<<endl;
+			}
 		}
-	}
-	if(!Tablero->Insertar(Ficha("H", 1), 0, 0)){
-		cout<<"No se ingresó la ficha, porque ya está ocupada esa casilla"<<endl;
-		if(SameNode(Ficha("H", 1), 0, 0)){
-			cout<<"La ficha es la misma"<<endl;
-		}else{
-			cout<<"La ficha NO es la misma"<<endl;
+		if(!Tablero->Insertar(Ficha("H", 1), 0, 0)){
+			cout<<"No se ingresó la ficha, porque ya está ocupada esa casilla"<<endl;
+			if(SameNode(Ficha("H", 1), 0, 0)){
+				cout<<"La ficha es la misma"<<endl;
+			}else{
+				cout<<"La ficha NO es la misma"<<endl;
+			}
 		}
-	}
-	if(Tablero->CasillaOcupada(Ficha("H", 1), 0, 4)){
-		cout<<"La casilla está ocupada"<<endl;		
-	}else{
-		cout<<"casilla libre";
-	}
-	//---------------------------------------------------------------------------------------
-	ofstream graphFile;
-    string name = "Tablero";
-    graphFile.open(""+name+".txt");
-    graphFile << ImprimirTablero(Tablero);
-    graphFile.close();
-    std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
-    system(filePath.c_str());
-	*/
-	/*//cout<<PrintW(matriz);
-	matriz->ImprimirMatriz();
-	ofstream graphFile;
-    string name = "Tablero";
-    graphFile.open(""+name+".txt");
-    graphFile << PrintW(matriz);
-    graphFile.close();
-    std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
-    system(filePath.c_str());
-	ABB *arbol = new ABB();
-	arbol->Insertar("Maria");
-	arbol->Insertar("Alex");
-	arbol->Insertar("Pamela");
-	arbol->Insertar("Lucia");
-	arbol->Insertar("Gabriela");
-	arbol->Insertar("Karla");
-	arbol->Imprimir(1);
-	
+		if(Tablero->CasillaOcupada(Ficha("H", 1), 0, 4)){
+			cout<<"La casilla está ocupada"<<endl;		
+		}else{
+			cout<<"casilla libre";
+		}
+		//---------------------------------------------------------------------------------------
+		ofstream graphFile;
+		string name = "Tablero";
+		graphFile.open(""+name+".txt");
+		graphFile << ImprimirTablero(Tablero);
+		graphFile.close();
+		std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
+		system(filePath.c_str());
+		*/
+		/*//cout<<PrintW(matriz);
+		matriz->ImprimirMatriz();
+		ofstream graphFile;
+		string name = "Tablero";
+		graphFile.open(""+name+".txt");
+		graphFile << PrintW(matriz);
+		graphFile.close();
+		std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
+		system(filePath.c_str());
 		ABB *arbol = new ABB();
-	while(true){
-		string nombre;
-		cin>>nombre;
-		arbol->Insertar(nombre);
-		arbol->Imprimir();
-		cout<<arbol->GetSize();
-	}*/
+		arbol->Insertar("Maria");
+		arbol->Insertar("Alex");
+		arbol->Insertar("Pamela");
+		arbol->Insertar("Lucia");
+		arbol->Insertar("Gabriela");
+		arbol->Insertar("Karla");
+		arbol->Imprimir(1);
+		
+			ABB *arbol = new ABB();
+		while(true){
+			string nombre;
+			cin>>nombre;
+			arbol->Insertar(nombre);
+			arbol->Imprimir();
+			cout<<arbol->GetSize();
+		}*/
 	
+
+		ArchivoEntrada=false;
 	arbol->Insertar("Mario Orellana");
 	arbol->Insertar("Josue Orellana");
+	Nodo<jugadores> *temp = arbol->GetRoot();
+	jugadores temporal = temp->getValue();
+	InsertarOrdenado(temporal, 0);
+	InsertarOrdenado(temporal, 1);
+	InsertarOrdenado(temporal, 3);
+	InsertarOrdenado(temporal, 2);
 	Menu();
 	return 0;
 	}

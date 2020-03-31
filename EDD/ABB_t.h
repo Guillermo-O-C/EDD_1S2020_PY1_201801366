@@ -151,7 +151,7 @@ string ABB::PrintTree(Nodo<jugadores> *Central){
     }
 string ABB::Preorder(Nodo<jugadores> *Central){
         string content = "";
-        cout<<to_string(size)<<","<<to_string(impresos);
+   //     cout<<to_string(size)<<","<<to_string(impresos);
         if(impresos<size){
                 content += to_string(Central->getValue().getID())+ " -> ";
         }else{
@@ -185,21 +185,19 @@ string ABB::PosOrder(Nodo<jugadores> *Central){
         string content = "";
         if (Central->getPrevious() != NULL)//Left
         {
-            impresos++;
             content += PosOrder(Central->getPrevious()); 
         }    
             
         if (Central->getNext() != NULL)//Right
         {
-            impresos++;
             content += PosOrder(Central->getNext());
         }
-        if(impresos<size){
+        impresos++;
+        if(impresos<size+1){
                 content += to_string(Central->getValue().getID())+ " -> ";
         }else{
                 content += to_string(Central->getValue().getID())+ ";\n";
         }
-        cout<<to_string(size)<<","<<to_string(impresos);
         return content;
     }
 string ABB::GetLabels(Nodo<jugadores> *Central){

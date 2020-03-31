@@ -20,6 +20,8 @@ class ListaSimple{
 		Nodo<T>* SacarElemento(int posiscion);
 		Nodo<T>* ElementAt(int posiscion);
 		void Vaciar();
+		bool InsertAt(T value, int place);
+		bool InsertBefore(T value, int place);
 };
 template <class T>
 void ListaSimple<T>:: Insertar(T value){
@@ -124,4 +126,49 @@ Nodo<T>* ListaSimple<T>::ElementAt(int posicion){
 			return NULL;
 		}
 	return NULL;
+}
+
+template <class T>
+bool ListaSimple<T>::InsertAt(T value, int place){
+    Nodo<T> *nuevo = new Nodo<T>(value); 
+    if(place<=size){
+        Nodo<T> *auxiliar=this->cabeza;
+        for(int i =0;i<place;i++){
+            auxiliar=auxiliar->getNext();
+        }
+        nuevo->setNext(auxiliar->getNext());
+        auxiliar->setNext(nuevo);
+		size++;   
+		return true;
+    }else{
+		return false;
+	} 
+}
+
+template <class T>
+bool ListaSimple<T>::InsertBefore(T value, int place){
+    Nodo<T> *nuevo = new Nodo<T>(value); 
+    if(place<=size){
+        Nodo<T> *auxiliar=this->cabeza;
+        Nodo<T> *temp=auxiliar;
+        for(int i =0;i<place;i++){
+			temp=auxiliar;
+			if(auxiliar->getNext()!=NULL){
+            	auxiliar=auxiliar->getNext();
+			}
+        }
+		if(auxiliar==this->cabeza){
+			nuevo->setNext(this->cabeza);
+			this->cabeza=nuevo;
+		}else if(auxiliar->getNext()==NULL){
+			auxiliar->setNext(nuevo);
+		}else{
+			temp->setNext(nuevo);
+			nuevo->setNext(auxiliar);
+		}
+		size++;   
+		return true;
+    }else{
+		return false;
+	} 
 }

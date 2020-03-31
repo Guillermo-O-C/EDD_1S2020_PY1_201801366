@@ -76,7 +76,7 @@ int Cola<T>:: GetSize(){
 }
 template <class T>
 Nodo<T>* Cola<T>:: ReturnTop(){
-	return cabeza;
+	return this->cabeza;
 }
 template <class T>
 bool Cola<T>:: Empty(){

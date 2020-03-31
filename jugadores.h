@@ -11,6 +11,7 @@ private:
     int ID;
 	ListaDoble<Ficha> *listaFichas;
 	int PunteoTemporal;
+	ListaSimple<int> *Scores;
 
 public:
     jugadores()
@@ -18,12 +19,14 @@ public:
 		this->name="";
 		this->listaFichas = new ListaDoble<Ficha>();
 		this->PunteoTemporal=0;
+		this->Scores=new ListaSimple<int>();
 	}
     jugadores(string name)
 	{
 		this->name=name;
 		this->listaFichas = new ListaDoble<Ficha>();
 		this->PunteoTemporal=0;
+		this->Scores=new ListaSimple<int>();
 	}
     string getName()
 	{
@@ -46,6 +49,12 @@ public:
 	}
 	ListaDoble<Ficha>* getFichas(){
 		return this->listaFichas;
+	}
+	void setFichas(ListaSimple<int> *Scores){
+		this->Scores=Scores;
+	}
+	ListaSimple<int>* getScores(){
+		return this->Scores;
 	}
 	int getPunteoTemporal()
 	{
