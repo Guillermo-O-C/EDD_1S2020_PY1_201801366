@@ -161,7 +161,8 @@ bool ListaSimple<T>::InsertBefore(T value, int place){
 			nuevo->setNext(this->cabeza);
 			this->cabeza=nuevo;
 		}else if(auxiliar->getNext()==NULL){
-			auxiliar->setNext(nuevo);
+			nuevo->setNext(auxiliar);
+			temp->setNext(nuevo);
 		}else{
 			temp->setNext(nuevo);
 			nuevo->setNext(auxiliar);

@@ -7,5 +7,7 @@ digraph G {
 0 -> 1;
 1[label="Josue Orellana"];
 0 -> 2;
-2[label="oskd"];
+2[label="Walter Orellana"];
+2 -> 3;
+3[label="joshua"];
 }

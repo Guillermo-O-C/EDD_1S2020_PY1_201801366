@@ -1,48 +1,53 @@
 digraph G { 
  node[shape=box]
   root[label=raiz]
-  root -> X0[constraint=false, dir=both];
+  root -> X0[constraint=true, dir=both];
  root -> Y1[dir=both];
-X0 -> X2[dir=both, constraint=false];
+X0 -> X2[dir=both, constraint=true];
 X0 -> C0F1[dir=both];
-X2 -> X4[dir=both, constraint=false];
+X2 -> X4[dir=both, constraint=true];
 X2 -> C2F5[dir=both];
-X4 -> X6[dir=both, constraint=false];
+X4 -> X6[dir=both, constraint=true];
 X4 -> C4F10[dir=both];
-X6 -> X10[dir=both, constraint=false];
+X6 -> X7[dir=both, constraint=true];
 X6 -> C6F10[dir=both];
+X7 -> X10[dir=both, constraint=true];
+X7 -> C7F10[dir=both];
 X10 -> C10F15[dir=both];
 root[group=1];
 X0[group=2];
 X2[group=4];
 X4[group=6];
 X6[group=8];
+X7[group=9];
 X10[group=12];
 
-{rank =same;root;X0;X2;X4;X6;X10}
-Y1 -> C0F1[dir=both, constraint=false];
+{rank =same;root;X0;X2;X4;X6;X7;X10}
+Y1 -> C0F1[dir=both, constraint=true];
 Y1 -> Y5[dir=both];
 C0F1 -> C0F15[dir=both];
 Y1[group=1];
 C0F1[group=2];
 
 {rank =same;Y1;C0F1}
-Y5 -> C2F5[dir=both, constraint=false];
+Y5 -> C2F5[dir=both, constraint=true];
 Y5 -> Y10[dir=both];
 Y5[group=1];
 C2F5[group=4];
 
 {rank =same;Y5;C2F5}
-Y10 -> C4F10[dir=both, constraint=false];
+Y10 -> C4F10[dir=both, constraint=true];
 Y10 -> Y15[dir=both];
-C4F10 -> C6F10[dir=both,constraint=false];
+C4F10 -> C6F10[dir=both,constraint=true];
+C6F10 -> C7F10[dir=both,constraint=true];
 Y10[group=1];
 C4F10[group=6];
 C6F10[group=8];
+C7F10[group=9];
 
-{rank =same;Y10;C4F10;C6F10}
-Y15 -> C0F15[dir=both, constraint=false];
-C0F15 -> C10F15[dir=both,constraint=false];
+{rank =same;Y10;C4F10;C6F10;C7F10}
+Y15 -> C0F15[dir=both, constraint=true];
+C0F15 -> C10F15[dir=both,constraint=true];
 Y15[group=1];
 C0F15[group=2];
 C10F15[group=12];
@@ -52,6 +57,7 @@ X0[label="0"];
 X2[label="2"];
 X4[label="4"];
 X6[label="6"];
+X7[label="7"];
 X10[label="10"];
 Y1[label="1"];
 C0F1[label=" "];
@@ -59,7 +65,8 @@ Y5[label="5"];
 C2F5[label=" "];
 Y10[label="10"];
 C4F10[label=" "];
-C6F10[label=" "];
+C6F10[label="S"];
+C7F10[label="I"];
 Y15[label="15"];
 C0F15[label=" "];
 C10F15[label=" "];

@@ -4,8 +4,9 @@ digraph G {
  margin=0.1;
    node [shape=box];
   edge [arrowsize=0.8]
-1->0->2;
+1->0->2->3;
 0[label="Mario Orellana"];
 1[label="Josue Orellana"];
-2[label="oskd"];
+2[label="Walter Orellana"];
+3[label="joshua"];
 }

@@ -1,4 +1,6 @@
 //System Needs
+#include <string>
+	#include <iostream>
 	#include <fstream>
 	#include <typeinfo>
 	#include <random>
@@ -23,7 +25,7 @@
 	ListaSimple<jugadores> *JugadoresOrdenados;
 	ListaDobleCircular<string> *diccionario = new ListaDobleCircular<string>;
 	Cola<Ficha> *Bolsa = new Cola<Ficha>();
-	MatrizDispersa<Ficha> *Tablero = new MatrizDispersa<Ficha>(Ficha("-", 0));
+	MatrizDispersa<Ficha> *Tablero = new MatrizDispersa<Ficha>(Ficha("-", 0));	
 	int DimensionTablero, punteoJugador1, punteoJugador2;
 	jugadores jugador1, jugador2;
 	bool ganador, Insertar, UpdateCasilla, Vacio, Iniciado, ArchivoEntrada;
@@ -137,7 +139,7 @@ string ImprimirTablero(MatrizDispersa<Ficha> *ma){
                 //imprimir derecha
 				content+=" root[label=raiz]\n ";
                 content+=" root -> X"+to_string(temp->getNext()->getX());
-				content+="[constraint=false, dir=both];\n";
+				content+="[constraint=true, dir=both];\n";
 				//imprimir abajo
 				content+=" root -> Y"+to_string(temp->getDown()->getY());
 				content+="[dir=both];\n";				
@@ -160,7 +162,7 @@ string ImprimirTablero(MatrizDispersa<Ficha> *ma){
                 //imprimir derecha
 				if(temp->getNext()!=NULL){
 					content+="X"+to_string(temp->getX())+" -> X"+to_string(temp->getNext()->getX());
-					content+="[dir=both, constraint=false];\n";
+					content+="[dir=both, constraint=true];\n";
 				}
 				//imprimir abajo	
 				if(temp->getDown()!=NULL){
@@ -176,7 +178,7 @@ string ImprimirTablero(MatrizDispersa<Ficha> *ma){
                 //imprimir derecha
 				if(temp->getNext()!=NULL){
 					content+="Y"+to_string(temp->getY())+" -> C"+ to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
-					content+="[dir=both, constraint=false];\n";
+					content+="[dir=both, constraint=true];\n";
 				}
 			    //imprimir arriba	
 			/*	if(temp->getUp()!=NULL){
@@ -212,7 +214,7 @@ string ImprimirTablero(MatrizDispersa<Ficha> *ma){
                */ //imprimir derecha 
 				if(temp->getNext()!=NULL){
 					content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
-					content+="[dir=both,constraint=false];\n";
+					content+="[dir=both,constraint=true];\n";
 				}
 			 /*   //imprimir arriba
 				if(temp->getUp()!=NULL){
@@ -470,6 +472,149 @@ string PrintW(MatrizDispersa<string> *ma){
 	return content+"\n}";
 	}
 
+string ImprimirArribaTab(MatrizDispersa<Ficha> *ma){
+    string content ="digraph G { \n node[shape=box]\n ";
+	string nivelador;
+	string rankedLevel;
+    string labels="";
+	Nodo<Ficha> *auxiliar = ma->getRoot();    
+	while(auxiliar!=NULL){
+        Nodo<Ficha> *temp = auxiliar;
+		nivelador="";
+		rankedLevel="{rank =same;";
+        while(temp!=NULL){
+			
+            if(temp->getX()==-1 && temp->getY()==-1){
+				nivelador+="root[group=1];\n";
+				rankedLevel+="root";			
+				//content+= "pinting root\n";
+                //imprimir derecha
+				content+=" root[label=raiz]\n ";
+              //  content+=" root -> X"+to_string(temp->getNext()->getX());
+			//	content+="[constraint=false, dir=both];\n";
+			/**/	//imprimir abajo
+			//	content+=" root -> Y"+to_string(temp->getDown()->getY());
+			//	content+="[dir=both];\n";	/**/			
+            }else if(temp->getY()==-1){//cabeza columnas
+				//content+= "pinting column head\n";
+				rankedLevel+=";X"+to_string(temp->getX());
+                labels+="X"+to_string(temp->getX())+"[label=\""+to_string(temp->getX())+"\"];\n";
+				nivelador+="X"+to_string(temp->getX())+"[group="+to_string(temp->getX()+2)+"];\n";
+              // cout<< temp->getX() <<"  " ; 
+			   //imprimir izquierda
+			   	if(temp->getPrevious()!=NULL){
+					if(temp->getPrevious()->getX()==-1 && temp->getPrevious()->getY()==-1){
+						content+="X"+to_string(temp->getX())+" -> root[constraint=false, dir=both];\n";
+					}else{
+						content+="X"+to_string(temp->getX())+" -> X"+to_string(temp->getPrevious()->getX());
+						content+="[constraint=false, dir=both];\n";
+					}
+			   	}
+                //imprimir derecha
+			/*	if(temp->getNext()!=NULL){
+					content+="X"+to_string(temp->getX())+" -> X"+to_string(temp->getNext()->getX());
+					content+="[dir=both, constraint=false];\n";
+				}
+				//imprimir abajo	
+				if(temp->getDown()!=NULL){
+					content+="X"+to_string(temp->getX())+" -> C"+to_string(temp->getDown()->getX())+"F"+to_string(temp->getDown()->getY());
+					content+="[dir=both];\n";
+				}*/
+            }else if(temp->getX()==-1){//cabeza filas
+                labels+="Y"+to_string(temp->getY())+"[label=\""+to_string(temp->getY())+"\"];\n";
+				rankedLevel+="Y"+to_string(temp->getY());
+				nivelador+="Y"+to_string(temp->getY())+"[group=1];\n";
+				//content+= "pinting row head\n";
+             //  cout<< temp->getY() <<"\n" ;
+                //imprimir derecha
+			/*	if(temp->getNext()!=NULL){
+					content+="Y"+to_string(temp->getY())+" -> C"+ to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
+					content+="[dir=both, constraint=false];\n";
+				}*/
+			    //imprimir arriba	
+				if(temp->getUp()!=NULL){
+					if(temp->getUp()->getX()==-1 && temp->getUp()->getY()==-1){
+						content+="Y"+to_string(temp->getY())+" -> root[dir=both];\n";
+					}else{
+						content+="Y"+to_string(temp->getY())+" -> Y"+to_string(temp->getUp()->getY());
+						content+="[dir=both];\n";
+					}
+				}	
+				//imprimir abajo
+			/*	if(temp->getDown()!=NULL){
+					content+="Y"+to_string(temp->getY())+" -> Y"+to_string(temp->getDown()->getY());
+					content+="[dir=both];\n";
+				}*/	
+            }else {//contenido de la matriz
+                labels+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+"[label=\""+temp->getValue().getChar()+"\"];\n";
+				rankedLevel+=";C"+to_string(temp->getX())+"F"+to_string(temp->getY());
+				nivelador+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+"[group="+to_string(temp->getX()+2)+"];\n";
+				//cout<<"contiene "+ temp->getValue()+"en ("<<to_string(temp->getX())+","+to_string(temp->getY())<<")";
+             //  cout<< temp->getValue() <<" ";
+			    //imprimir izquierda
+				if(temp->getPrevious()!=NULL){
+					if(temp->getPrevious()->getX()==-1){
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> Y"+to_string(temp->getPrevious()->getY());
+						content+="[constraint=false, dir=both];\n";
+					}else{
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getPrevious()->getX())+"F"+to_string(temp->getPrevious()->getY());
+						content+="[constraint=false, dir=both];\n";
+					}
+				}
+                //imprimir derecha 
+			/*	if(temp->getNext()!=NULL){
+					content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getNext()->getX())+"F"+to_string(temp->getNext()->getY());
+					content+="[dir=both,constraint=false];\n";
+				}
+			*/    //imprimir arriba
+				if(temp->getUp()!=NULL){
+					if(temp->getUp()->getY()==-1){
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> X"+to_string(temp->getUp()->getX());
+						content+="[dir=both];\n";
+					}else{
+						content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getUp()->getX())+"F"+to_string(temp->getUp()->getY());
+						content+="[dir=both];\n";
+					}
+				}/*
+				//imprimir abajo
+				if(temp->getDown()!=NULL){
+					content+="C"+to_string(temp->getX())+"F"+to_string(temp->getY())+" -> C"+to_string(temp->getDown()->getX())+"F"+to_string(temp->getDown()->getY());
+					content+="[dir=both];\n";
+				}*/
+            }            
+            temp=temp->getDown();
+        }
+		content+=nivelador+"\n";
+		/*
+		if(YRows-1>=0){
+			content+=rankedLevel+";e"+to_string(YRows-1)+"}\n";
+		}else{
+		}
+		*/		
+		content+=rankedLevel+"}\n";
+        auxiliar = auxiliar->getNext();
+    }
+	/*
+	string extraNodes="";
+	string YLeveler ="X"+to_string(Xcolumns-1);
+	string RowsLevel="e"+to_string(ENodes-1)+"->"+LastPosition+";\n e"+to_string(ENodes-1)+" -> Y"+to_string(ENodes-1);
+	for(int i =0;i<ENodes;i++){
+		extraNodes+="e"+to_string(i)+"[shape=point, width=0];\n";
+		YLeveler+="->e"+to_string(i);
+	}
+	YLeveler+="[dir=none];";
+	*/
+	Nodo<Casillas> *aux = casillasEspeciales->GetCabeza();
+		for(int i =0;i<casillasEspeciales->GetSize();i++){
+			if(aux->getValue().getTipo()=="Doble"){
+				labels+="C"+to_string(aux->getValue().getX())+"F"+to_string(aux->getValue().getY())+"[color=deepskyblue style=filled];\n";
+			}else if(aux->getValue().getTipo()=="Triple"){
+				labels+="C"+to_string(aux->getValue().getX())+"F"+to_string(aux->getValue().getY())+"[color=salmon2 style=filled];\n";
+			}
+			aux=aux->getNext();
+		}
+	return content+labels+"\n}";
+	}
 void RecorrerArbol(Nodo<jugadores> *Central, ListaSimple<jugadores> *lista){
 		if (Central->getPrevious() != NULL)//Left
         {          
@@ -655,6 +800,12 @@ void UpdateTablero(){
     graphFile.close();
     std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
     system(filePath.c_str());
+	//prueba de otra forma de graficar
+	/*graphFile.open("TableroArriba.txt");
+    graphFile << ImprimirArribaTab(Tablero);
+    graphFile.close();
+    filePath="dot -Tpng TableroArriba.txt -o TableroArriba.png";
+    system(filePath.c_str());*/
 	}
 void InsertarOrdenado(jugadores jugador, int puntaje){
 	Nodo<int> *aux = jugador.getScores()->GetCabeza();
@@ -662,24 +813,95 @@ void InsertarOrdenado(jugadores jugador, int puntaje){
 		jugador.getScores()->Insertar(puntaje);
 	}else{
 		int i=0;
-		while(puntaje<=aux->getValue()){
+		while(puntaje<aux->getValue()){
 		//	cout<<to_string(puntaje)<<" < "<<aux->getValue()<<endl;
-			i++;
 			if(aux->getNext()!=NULL){
+				i++;
 				aux=aux->getNext();				
 			}else{
 				break;
 			}
 		}
-	//	cout<<to_string(puntaje)<<" se debe ingresar antes de "<<aux->getValue()<<endl;		
-		jugador.getScores()->InsertBefore(puntaje, i);	
+		if(aux->getNext()==NULL){
+			if(puntaje<aux->getValue()){
+			//	cout<<to_string(puntaje)<<" se debe ingresar después de "<<aux->getValue()<<endl;
+				jugador.getScores()->Insertar(puntaje);
+			}else{	
+			//	cout<<to_string(puntaje)<<", se debe ingresar antes de "<<aux->getValue()<<endl;
+				jugador.getScores()->InsertBefore(puntaje, i);
+			}
+		}else{			
+		//	cout<<to_string(puntaje)<<" se debe ingresar antes de "<<aux->getValue()<<endl;	
+			jugador.getScores()->InsertBefore(puntaje, i);
+		}
+				
+	}
+	}
+void OrdenarJugadores(ListaSimple<jugadores> *lista, jugadores jugador){
+	Nodo<jugadores> *aux = lista->GetCabeza();
+	if(aux==NULL){
+		lista->Insertar(jugador);
+	}else{
+		int i=0;
+		while(jugador.getScores()->GetCabeza()<aux->getValue().getScores()->GetCabeza()){
+		//	cout<<to_string(puntaje)<<" < "<<aux->getValue()<<endl;
+			if(aux->getNext()!=NULL){
+				i++;
+				aux=aux->getNext();				
+			}else{
+				break;
+			}
+		}
+		if(aux->getNext()==NULL){
+			if(jugador.getScores()->GetCabeza()<aux->getValue().getScores()->GetCabeza()){
+			//	cout<<to_string(puntaje)<<" se debe ingresar después de "<<aux->getValue()<<endl;
+				lista->Insertar(jugador);
+			}else{	
+			//	cout<<to_string(puntaje)<<", se debe ingresar antes de "<<aux->getValue()<<endl;
+				lista->InsertBefore(jugador, i);
+			}
+		}else{			
+		//	cout<<to_string(puntaje)<<" se debe ingresar antes de "<<aux->getValue()<<endl;	
+			lista->InsertBefore(jugador, i);
+		}
+				
+	}
+	}
+void OrdenarLista(ListaSimple<jugadores> *lista){
+	Nodo<jugadores> *primero, *segundo;
+	for(int j=0;j<lista->GetSize();j++){
+		for(int i =0;i<lista->GetSize()-1;i++){
+			primero=lista->ElementAt(i);
+			cout<<"Comparando "<<primero->getValue().getName()<<" con "<<segundo->getValue().getName();
+			segundo=lista->ElementAt(i+1);
+			if(primero->getValue().getScores()->GetSize()>0 && segundo->getValue().getScores()->GetSize()>0){
+				if(primero->getValue().getScores()->GetCabeza()>segundo->getValue().getScores()->GetCabeza()){
+					jugadores temporal = segundo->getValue();
+					segundo->setValue(primero->getValue());
+					primero->setValue(temporal);
+				}
+			}else if(primero->getValue().getScores()->GetSize()>0 && segundo->getValue().getScores()->GetSize()==0){
+				/*	jugadores temporal = segundo->getValue();
+					segundo->setValue(primero->getValue());
+					primero->setValue(temporal);*/
+			}else if(segundo->getValue().getScores()->GetSize()>0 && primero->getValue().getScores()->GetSize()==0){
+					jugadores temporal = segundo->getValue();
+					segundo->setValue(primero->getValue());
+					primero->setValue(temporal);
+			}
+		}
 	}
 	}
 void PrintBestScores(){
 	ListaSimple<jugadores> *temporal = new ListaSimple<jugadores>();
 	RecorrerArbol(arbol->GetRoot(), temporal);
-	Nodo<jugadores> *temp = temporal->GetCabeza();
-	int i=0;
+	//OrdenarLista(temporal);
+	ListaSimple<jugadores> *ordenada = new ListaSimple<jugadores>();
+	for(int i =0;i<temporal->GetSize();i++){
+		OrdenarJugadores(ordenada, temporal->ElementAt(i)->getValue());
+	}
+	Nodo<jugadores> *temp = ordenada->GetCabeza();
+	int i=1;
 	while(temp!=NULL){
 		cout<<to_string(i)<<". "<<temp->getValue().getName()<<"-----";
 		if(temp->getValue().getScores()->GetCabeza()!=NULL){
@@ -687,6 +909,7 @@ void PrintBestScores(){
 		}else{
 			cout<<"no ha jugado ninuguna partida."<<endl;
 		}
+		i++;
 		temp=temp->getNext();
 	}
 	}
@@ -708,6 +931,15 @@ int CasillaEspecial(int x, int y){
 	return 1;
 	}
 //Métodos del juego
+void NuevoTablero(){
+	Tablero = new MatrizDispersa<Ficha>(Ficha("-", 0));
+	Nodo<Casillas> *aux = casillasEspeciales->GetCabeza();
+		for(int i=0;i<casillasEspeciales->GetSize();i++){
+			//cout << to_string(aux->getValue().getX()) <<","<<to_string(aux->getValue().getY())<<endl;
+			Tablero->Insertar(Ficha(" ", 0),aux->getValue().getX(),aux->getValue().getY());
+			aux=aux->getNext();
+		}
+	}
 int AdicionarPunteo(string letra, int x, int y){
 	int valorletra = 0;
 	if(letra=="Ñ"){
@@ -1024,7 +1256,7 @@ void Turno(jugadores enTurno, int *PunteoJugador){
 	if(x>DimensionTablero || y >DimensionTablero || x<0 || y<0){
 		cout<<"La posición ("+to_string(x)+","+to_string(y)+") no está dentro del rango del tablero."<<endl;
 	}else{
-		cout<<enTurno.getName() <<" escoge la opción que desees\n 1. Ingresar Vertical\n 2. Ingresar Horizontal"<<endl;
+		cout<<enTurno.getName() <<" escoge la opción que desees\n1. Ingresar Vertical\n2. Ingresar Horizontal"<<endl;
 		cin>>VoH;
 		string palabra;
 		cout<<"Introduce la palabra"<<endl;
@@ -1077,7 +1309,7 @@ void Jugar(){
 				if(SuTurno)//Turno del jugador 1
 				{
 					cout<< jugador1.getName()+" selecciona la acción que desees realizar\n1."+
-												"Jugar Turno\n2. Cambiar Fichas\n3. Terminar Partida"<<endl;
+												" Jugar Turno\n2. Cambiar Fichas\n3. Terminar Partida"<<endl;
 					cin>>Accion;
 					switch (Accion)
 					{
@@ -1099,7 +1331,7 @@ void Jugar(){
 					RellenarFichero(jugador1);
 					SuTurno=false;
 				}else{//Turno del jugador 2
-					cout<< jugador2.getName()+" selecciona la acción que desees realizar\n1."+
+					cout<< jugador2.getName()+" selecciona la acción que desees realizar\n1. "+
 												"Jugar Turno\n2. Cambiar Fichas\n3. Terminar Partida"<<endl;
 					cin>>Accion;
 					switch (Accion)
@@ -1272,6 +1504,8 @@ void LlenarCola(){
 	}
 	}
 void CargarArchivo(){
+	diccionario = new ListaDobleCircular<string>;
+	casillasEspeciales =  new ListaSimple<Casillas>();
 	string nombre;
 	cin>>nombre;
 	try{
@@ -1314,22 +1548,24 @@ void CargarArchivo(){
 void CrearJugador(){
 	string nombre;
 	cout<<"Ingresa el nombre del  nuevo jugador: ";
-	cin>>nombre;
+	//cin.getline(nombre, 50);
+	cin.ignore();
+	std::getline(cin, nombre);
 	if(arbol->Insertar(nombre)){
-		cout<<"Ingreso Correcto del nuevo jugador\n";
+		cout<<endl<<"Ingreso Correcto del nuevo jugador\n";
 		arbol->Imprimir();
 	}else{
-		cout<<"El jugador ya existe\n";
+		cout<<endl<<"El jugador ya existe\n";
 	}	
 	}
 void IniciarEDD(){
 	Tablero = new MatrizDispersa<Ficha>(Ficha("-", 0));
 	Bolsa = new Cola<Ficha>();
 	casillasEspeciales= new ListaSimple<Casillas>();
-	diccionario= new ListaDobleCircular<string>();
+	diccionario = new ListaDobleCircular<string>();
 	}
 void Menu(){
-	//IniciarEDD();
+	NuevoTablero();
 	cout <<"\nBienvenido a Scrabble++\n"<<endl<<"Escoje la opción que deseas ejecutar:\n1.Jugar"
 												<<"\n2.Crear Jugador\n3.Cargar Archivo\n4.Score Borad\n"
 												<<"5.Historial de Puntajes\n";
@@ -1339,11 +1575,16 @@ void Menu(){
 	{
 	case 1:
 		if(ArchivoEntrada){
-			LlenarCola();
-			EscogerJugadores();
-			Menu();
+			if(arbol->GetSize()>1){
+				LlenarCola();
+				EscogerJugadores();
+				Menu();
+			}else{
+				cout<<"/-/-/-/-/-ERROR-/-/-/-/-/\nNo hay suficientes jugadores registados"<<endl;
+				Menu();
+			}
 		}else{
-			cout<<"/-/-/-/-/-ERROR-/-/-/-/-/\nNo se ha cargado ningún archivo de entrada.";
+			cout<<"/-/-/-/-/-ERROR-/-/-/-/-/\nNo se ha cargado ningún archivo de entrada."<<endl;
 			Menu();
 		}		
 		break;
@@ -1374,9 +1615,13 @@ void Menu(){
 		cin>>opcion;
 		if(opcion<=JugadoresOrdenados->GetSize() && opcion>0){
 			jugadores player = JugadoresOrdenados->ElementAt(opcion-1)->getValue();
-			cout<<"Los puntajes de "<<player.getName()<<" son:"<<endl;
-			for(int i =0;i< player.getScores()->GetSize();i++){
-				cout<<to_string(i+1)<<". "<<to_string(player.getScores()->ElementAt(i)->getValue())<<endl;
+			if(player.getScores()->GetSize()>0){
+				cout<<"Los puntajes de "<<player.getName()<<" son:"<<endl;
+				for(int i =0;i< player.getScores()->GetSize();i++){
+					cout<<to_string(i+1)<<". "<<to_string(player.getScores()->ElementAt(i)->getValue())<<endl;
+				}
+			}else{
+				cout<<player.getName()<<" no ha jugado ninguna partida."<<endl;
 			}
 		}
 		Menu();
@@ -1468,12 +1713,27 @@ int main(int argc, char ** argv){
 		ArchivoEntrada=false;
 	arbol->Insertar("Mario Orellana");
 	arbol->Insertar("Josue Orellana");
+	arbol->Insertar("Walter Orellana");
 	Nodo<jugadores> *temp = arbol->GetRoot();
-	jugadores temporal = temp->getValue();
+	Nodo<jugadores> *temp1 = temp->getPrevious();
+	Nodo<jugadores> *temp2 = temp->getNext();
+	jugadores temporal = temp->getValue();//mario
+	jugadores temporal1 = temp1->getValue();//josue
+	jugadores temporal2 = temp2->getValue();//walter
 	InsertarOrdenado(temporal, 0);
 	InsertarOrdenado(temporal, 1);
 	InsertarOrdenado(temporal, 3);
 	InsertarOrdenado(temporal, 2);
+	InsertarOrdenado(temporal1, 9);
+	InsertarOrdenado(temporal1, 3);
+	InsertarOrdenado(temporal1, 7);
+	InsertarOrdenado(temporal2, 1);
+	InsertarOrdenado(temporal2, 5);
+	InsertarOrdenado(temporal2, 10);
+	InsertarOrdenado(temporal2, 25);
+	InsertarOrdenado(temporal2, 1);
+	InsertarOrdenado(temporal2, 54);
+	InsertarOrdenado(temporal2, 4);
 	Menu();
 	return 0;
 	}
