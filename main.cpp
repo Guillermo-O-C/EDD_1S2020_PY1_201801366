@@ -1699,7 +1699,7 @@ void Menu(){
 
 int main(int argc, char ** argv){
 	/*
-		MatrizDispersa<string> *matriz = new MatrizDispersa<string>("putas");
+		MatrizDispersa<string> *matriz = new MatrizDispersa<string>("*");
 		matriz->Insertar("buenas", 0, 3);
 		matriz->Insertar("tardes", 0, 2);
 		matriz->ImprimirMatriz();
@@ -1769,7 +1769,7 @@ int main(int argc, char ** argv){
 			arbol->Insertar(nombre);
 			arbol->Imprimir();
 			cout<<arbol->GetSize();
-		}*/
+		}
 	
 
 		ArchivoEntrada=false;
@@ -1795,7 +1795,7 @@ int main(int argc, char ** argv){
 	InsertarOrdenado(temporal2, 25);
 	InsertarOrdenado(temporal2, 1);
 	InsertarOrdenado(temporal2, 54);
-	InsertarOrdenado(temporal2, 4);
+	InsertarOrdenado(temporal2, 4);*/
 	Menu();
 	return 0;
 	}
