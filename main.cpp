@@ -30,6 +30,39 @@
 	jugadores jugador1, jugador2;
 	bool ganador, Insertar, UpdateCasilla, Vacio, Iniciado, ArchivoEntrada;
 //Métodos de acceso a EDD
+void PrintScoreBoard(ListaSimple<jugadores> *lista){
+	std::string graph ("digraph ReporteLD { graph [dpi=300]\n rankdir =\"LR\"; \n size=\"5\" \n node [shape = box]; \n");
+	string labels;
+	Nodo<jugadores> *aux = lista->GetCabeza();
+    for(int i =0; i<lista->GetSize(); i++){
+		if(aux->getValue().getScores()->GetSize()>0){
+			labels +=to_string(aux->getValue().getID())+"[label=\""+aux->getValue().getName()+", "+to_string(aux->getValue().getScores()->GetCabeza()->getValue())+"\"];\n";
+        }else{
+				labels +=to_string(aux->getValue().getID())+"[label=\""+aux->getValue().getName()+", NP\"];\n";
+		}
+		if(i==0){
+			if(lista->GetSize()==1){
+           	 	graph +=  to_string(aux->getValue().getID()) + ";";
+			}else{
+            	graph +=  to_string(aux->getValue().getID()) + " -> ";
+			}
+        }
+        else{
+			if(i==lista->GetSize()-1){
+                    graph +=  to_string(aux->getValue().getID()) + ";\n";
+            }else{
+					graph +=  to_string(aux->getValue().getID()) + " -> ";
+			}
+        }
+        aux=aux->getNext();
+    	}
+	ofstream graphFile;
+	graphFile.open("txtFiles/ScoreBoard.txt");
+    graphFile << graph+labels+"}";
+    graphFile.close();
+    std::string filePath="dot -Tpng txtFiles/ScoreBoard.txt -o Imgs/ScoreBoard.png";
+    system(filePath.c_str());
+	}
 bool Compare(Ficha creada, Ficha nueva){
 	if(creada.getChar()==" "){
 		if(UpdateCasilla){
@@ -627,6 +660,7 @@ void RecorrerArbol(Nodo<jugadores> *Central, ListaSimple<jugadores> *lista){
         }
 	} 
 void PrintPlayers(){
+
 	 JugadoresOrdenados = new ListaSimple<jugadores>();
 	 RecorrerArbol(arbol->GetRoot(), JugadoresOrdenados);
 	 for(int i=0;i<JugadoresOrdenados->GetSize();i++){
@@ -689,10 +723,10 @@ void GraphDoubleList(ListaDoble<Ficha> *lista, ListaDoble<Ficha> *lista2){
 		aux=aux->getNext();
 	}
 	ofstream graphFile;
-	graphFile.open("FichasEnJuego.txt");
+	graphFile.open("txtFiles/FichasEnJuego.txt");
     graphFile << graph+"}\n}";
     graphFile.close();
-    std::string filePath="dot -Tpng FichasEnJuego.txt -o FichasEnJuego.png";
+    std::string filePath="dot -Tpng txtFiles/FichasEnJuego.txt -o Imgs/FichasEnJuego.png";
     system(filePath.c_str());
 	}
 int SacarFicha(jugadores enTurno, string letra){
@@ -718,10 +752,10 @@ void ImprimirBolsa(){
 		i++;
 	}
 	ofstream graphFile;
-	graphFile.open("ColaDeFichas.txt");
+	graphFile.open("txtFiles/ColaDeFichas.txt");
     graphFile << graph+labels+"\n}";
     graphFile.close();
-    std::string filePath="dot -Tpng ColaDeFichas.txt -o ColaDeFichas.png";
+    std::string filePath="dot -Tpng txtFiles/ColaDeFichas.txt -o Imgs/ColaDeFichas.png";
     system(filePath.c_str());
 	}
 void ImprimirDiccionario(ListaDobleCircular<string> *lista){
@@ -754,10 +788,10 @@ void ImprimirDiccionario(ListaDobleCircular<string> *lista){
 		aux=aux->getNext();
 		}    
 	ofstream graphFile;
-	graphFile.open("Diccionario.txt");
+	graphFile.open("txtFiles/Diccionario.txt");
     graphFile << graph+"}";
     graphFile.close();
-    std::string filePath="dot -Tpng Diccionario.txt -o Diccionario.png";
+    std::string filePath="dot -Tpng txtFiles/Diccionario.txt -o Imgs/Diccionario.png";
     system(filePath.c_str());
 	}
 void FichasEnJuego(){
@@ -794,11 +828,10 @@ int ValorDeFicha(string letra, jugadores enTurno){
 	}
 void UpdateTablero(){
 	ofstream graphFile;
-    string name = "Tablero";
-    graphFile.open(""+name+".txt");
+    graphFile.open("txtFiles/Tablero.txt");
     graphFile << ImprimirTablero(Tablero);
     graphFile.close();
-    std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
+    std::string filePath="dot -Tpng txtFiles/Tablero.txt -o Imgs/Tablero.png";
     system(filePath.c_str());
 	//prueba de otra forma de graficar
 	/*graphFile.open("TableroArriba.txt");
@@ -841,10 +874,14 @@ void OrdenarJugadores(ListaSimple<jugadores> *lista, jugadores jugador){
 	Nodo<jugadores> *aux = lista->GetCabeza();
 	if(aux==NULL){
 		lista->Insertar(jugador);
+	}else if(jugador.getScores()->GetSize()==0){
+		lista->Insertar(jugador);
+	}else if(aux->getValue().getScores()->GetSize()==0){
+		lista->InsertBefore(jugador, 0);
 	}else{
 		int i=0;
-		while(jugador.getScores()->GetCabeza()<aux->getValue().getScores()->GetCabeza()){
-		//	cout<<to_string(puntaje)<<" < "<<aux->getValue()<<endl;
+		while(jugador.getScores()->GetCabeza()->getValue()<aux->getValue().getScores()->GetCabeza()->getValue()){
+		//	cout<<to_string(jugador.getScores()->GetCabeza()->getValue())<<" < "<<to_string(aux->getValue().getScores()->GetCabeza()->getValue())<<endl;
 			if(aux->getNext()!=NULL){
 				i++;
 				aux=aux->getNext();				
@@ -853,15 +890,15 @@ void OrdenarJugadores(ListaSimple<jugadores> *lista, jugadores jugador){
 			}
 		}
 		if(aux->getNext()==NULL){
-			if(jugador.getScores()->GetCabeza()<aux->getValue().getScores()->GetCabeza()){
-			//	cout<<to_string(puntaje)<<" se debe ingresar después de "<<aux->getValue()<<endl;
+			if(jugador.getScores()->GetCabeza()->getValue()<aux->getValue().getScores()->GetCabeza()->getValue()){
+		//		cout<<to_string(jugador.getScores()->GetCabeza()->getValue())<<" se debe ingresar después de "<<to_string(aux->getValue().getScores()->GetCabeza()->getValue())<<endl;
 				lista->Insertar(jugador);
 			}else{	
-			//	cout<<to_string(puntaje)<<", se debe ingresar antes de "<<aux->getValue()<<endl;
+				cout<<to_string(jugador.getScores()->GetCabeza()->getValue())<<", se debe ingresar antes de "<<to_string(aux->getValue().getScores()->GetCabeza()->getValue())<<endl;
 				lista->InsertBefore(jugador, i);
 			}
 		}else{			
-		//	cout<<to_string(puntaje)<<" se debe ingresar antes de "<<aux->getValue()<<endl;	
+		//	cout<<to_string(jugador.getScores()->GetCabeza()->getValue())<<" se debe ingresar antes de "<<to_string(aux->getValue().getScores()->GetCabeza()->getValue())<<endl;	
 			lista->InsertBefore(jugador, i);
 		}
 				
@@ -912,6 +949,7 @@ void PrintBestScores(){
 		i++;
 		temp=temp->getNext();
 	}
+	PrintScoreBoard(ordenada);	
 	}
 void PrintBestPersonalScores(){
 
@@ -930,7 +968,7 @@ int CasillaEspecial(int x, int y){
 	}
 	return 1;
 	}
-//Métodos del juego
+		//Métodos del juego
 void NuevoTablero(){
 	Tablero = new MatrizDispersa<Ficha>(Ficha("-", 0));
 	Nodo<Casillas> *aux = casillasEspeciales->GetCabeza();
@@ -1600,29 +1638,53 @@ void Menu(){
 		break;
 	case 4:
 		system("clear");
-		try{
-		 PrintBestScores();
-		}catch(exception e){
-			cout<<"No se pueden imprimir los puntajes";
+		if(arbol->GetSize()>0){
+			try{
+			PrintBestScores();
+			}catch(exception e){
+				cout<<"No se pueden imprimir los puntajes";
+			}
+		}else{
+			cout<<"No se han ingresado jugadores al registro."<<endl;
 		}
 		Menu();
 		break;
 	case 5:	
 		system("clear");
-		PrintPlayers();
-		cout<<"Ingresa el número del jugador del cual deseas conocer el historial de puntajes"<<endl;
-		int opcion;
-		cin>>opcion;
-		if(opcion<=JugadoresOrdenados->GetSize() && opcion>0){
-			jugadores player = JugadoresOrdenados->ElementAt(opcion-1)->getValue();
-			if(player.getScores()->GetSize()>0){
-				cout<<"Los puntajes de "<<player.getName()<<" son:"<<endl;
-				for(int i =0;i< player.getScores()->GetSize();i++){
-					cout<<to_string(i+1)<<". "<<to_string(player.getScores()->ElementAt(i)->getValue())<<endl;
+		if(arbol->GetSize()>0){
+			PrintPlayers();
+			cout<<"Ingresa el número del jugador del cual deseas conocer el historial de puntajes"<<endl;
+			int opcion;
+			cin>>opcion;
+			if(opcion<=JugadoresOrdenados->GetSize() && opcion>0){
+				jugadores player = JugadoresOrdenados->ElementAt(opcion-1)->getValue();
+				if(player.getScores()->GetSize()>0){
+					string graph="digraph ReporteLD { graph [dpi=300]\n rankdir =\"LR\"; \n size=\"5\" \n node [shape = box]; label=\"Puntajes de "+player.getName()+"\"";
+					string labels;
+					cout<<"Los puntajes de "<<player.getName()<<" son:"<<endl;
+					for(int i =0;i< player.getScores()->GetSize();i++){
+						cout<<to_string(i+1)<<". "<<to_string(player.getScores()->ElementAt(i)->getValue())<<endl;
+						if(i!=player.getScores()->GetSize()-1){
+							graph+=to_string(i+1)+"->";
+						}else{
+							graph+=to_string(i+1)+";\n";
+						}
+						labels+=to_string(i+1)+"[label=\""+to_string(player.getScores()->ElementAt(i)->getValue())+"\"];\n";
+					}
+					ofstream graphFile;
+					graphFile.open("txtFiles/Puntajes.txt");
+					graphFile << graph+labels+"}";
+					graphFile.close();
+					std::string filePath="dot -Tpng txtFiles/Puntajes.txt -o Imgs/Puntajes.png";
+					system(filePath.c_str());
+				}else{
+					cout<<player.getName()<<" no ha jugado ninguna partida."<<endl;
 				}
 			}else{
-				cout<<player.getName()<<" no ha jugado ninguna partida."<<endl;
+				cout<<to_string(opcion)<<" no es una opción válida."<<endl;
 			}
+		}else{
+			cout<<"No se han ingresado jugadores al registro."<<endl;
 		}
 		Menu();
 		break;

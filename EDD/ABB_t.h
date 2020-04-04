@@ -89,20 +89,20 @@ void ABB:: Imprimir(){
             string name ="ABB";
             content+=PrintTree(this->raiz);
             ofstream graphFile;
-            graphFile.open(""+name+".txt");
+            graphFile.open("txtFiles/"+name+".txt");
             graphFile << content+"}";
             graphFile.close();
-            std::string filePath="dot -Tpng "+name+".txt -o "+name+".png";
+            std::string filePath="dot -Tpng txtFiles/"+name+".txt -o Imgs/"+name+".png";
             system(filePath.c_str());
         //Preorder
             string ABB_Preorder="ABB_Pre";
             impresos=1;
             content=Preorder(this->raiz);
             content = "digraph G {\n rankdir=LR nodesep=0.3;\n ranksep=0.2;\n margin=0.1;\n   node [shape=box];\n  edge [arrowsize=0.8]\n" + content;
-            graphFile.open(""+ABB_Preorder+".txt");
+            graphFile.open("txtFiles/"+ABB_Preorder+".txt");
             graphFile << content+GetLabels(this->raiz)+"}";
             graphFile.close();
-            filePath="dot -Tpng "+ABB_Preorder+".txt -o "+ABB_Preorder+".png";
+            filePath="dot -Tpng txtFiles/"+ABB_Preorder+".txt -o Imgs/"+ABB_Preorder+".png";
             system(filePath.c_str());
         //InOrder
             string ABB_InOrder="ABB_In";
@@ -117,20 +117,20 @@ void ABB:: Imprimir(){
                     content+="->"+to_string(ids->ElementAt(i)->getValue());
                 }
                 }
-            graphFile.open(""+ABB_InOrder+".txt");
+            graphFile.open("txtFiles/"+ABB_InOrder+".txt");
             graphFile <<  content+";\n" +GetLabels(this->raiz)+"}";
             graphFile.close();
-            filePath="dot -Tpng "+ABB_InOrder+".txt -o "+ABB_InOrder+".png";
+            filePath="dot -Tpng txtFiles/"+ABB_InOrder+".txt -o Imgs/"+ABB_InOrder+".png";
             system(filePath.c_str());
         //Posorder
             string ABB_Posorder="ABB_Pos";
             impresos=1;
             content=PosOrder(this->raiz);
             content = "digraph G {\n rankdir=LR nodesep=0.3;\n ranksep=0.2;\n margin=0.1;\n   node [shape=box];\n  edge [arrowsize=0.8]\n" + content;
-            graphFile.open(""+ABB_Posorder+".txt");
+            graphFile.open("txtFiles/"+ABB_Posorder+".txt");
             graphFile << content+GetLabels(this->raiz)+"}";
             graphFile.close();
-            filePath="dot -Tpng "+ABB_Posorder+".txt -o "+ABB_Posorder+".png";
+            filePath="dot -Tpng txtFiles/"+ABB_Posorder+".txt -o Imgs/"+ABB_Posorder+".png";
             system(filePath.c_str());
         
 		}

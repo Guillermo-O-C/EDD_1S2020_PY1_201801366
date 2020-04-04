@@ -1,0 +1,9 @@
+digraph ReporteLD { graph [dpi=300]
+ rankdir ="LR"; 
+ size="5" 
+ node [shape = box]; 
+2 -> 1 -> 0;
+2[label="Walter Orellana, 54"];
+1[label="Josue Orellana, 9"];
+0[label="Mario Orellana, 3"];
+}

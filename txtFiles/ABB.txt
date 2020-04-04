@@ -1,0 +1,13 @@
+digraph G {
+ rankdir=TB nodesep=0.3;
+ ranksep=0.2;
+    margin=0.1;
+   node [shape=circle];
+  edge [arrowsize=0.8];0[label="Mario Orellana"];
+0 -> 1;
+1[label="Josue Orellana"];
+0 -> 2;
+2[label="Walter Orellana"];
+2 -> 3;
+3[label="luis"];
+}
