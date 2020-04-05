@@ -4,7 +4,7 @@ digraph G {
  margin=0.1;
    node [shape=box];
   edge [arrowsize=0.8]
-0->1;
+1->0;
 0[label="josue"];
-1[label="mario"];
+1[label="alejo"];
 }

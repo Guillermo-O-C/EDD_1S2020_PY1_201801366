@@ -3,6 +3,6 @@ digraph ReporteLD { graph [dpi=300]
  size="5" 
  node [shape = box]; 
 0 -> 1;
-0[label="josue, 18"];
-1[label="mario, 11"];
+0[label="josue, 3"];
+1[label="alejo, 2"];
 }

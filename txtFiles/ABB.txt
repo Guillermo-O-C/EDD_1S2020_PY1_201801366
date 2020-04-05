@@ -5,5 +5,5 @@ digraph G {
    node [shape=circle];
   edge [arrowsize=0.8];0[label="josue"];
 0 -> 1;
-1[label="mario"];
+1[label="alejo"];
 }

@@ -30,6 +30,17 @@
 	jugadores jugador1, jugador2;
 	bool ganador, Insertar, UpdateCasilla, Vacio, Iniciado, ArchivoEntrada;
 //Métodos de acceso a EDD
+void DecidirGanador(){
+		if(punteoJugador1>punteoJugador2){
+			cout<<"Felicidades, ha ganado "<<jugador1.getName()<<" con "<<to_string(punteoJugador1)<<" puntos."<<endl;
+		}else if(punteoJugador1<punteoJugador2){
+			cout<<"Felicidades, ha ganado "<<jugador2.getName()<<" con "<<to_string(punteoJugador2)<<" puntos."<<endl;
+		}else if(punteoJugador1==punteoJugador2){
+			cout<<"Es un empate con "<<to_string(punteoJugador1)<<" puntos."<<endl;
+		}else{
+			cout<<"No se ha podido determinar un ganador."<<endl;
+		}
+	}
 void PrintScoreBoard(ListaSimple<jugadores> *lista){
 	std::string graph ("digraph ReporteLD { graph [dpi=300]\n rankdir =\"LR\"; \n size=\"5\" \n node [shape = box]; \n");
 	string labels;
@@ -1397,6 +1408,7 @@ void Jugar(){
 					}
 					UpdateTablero();
 			}
+		DecidirGanador();
 		InsertarOrdenado(jugador1, punteoJugador1);
 		InsertarOrdenado(jugador2, punteoJugador2);
 		}

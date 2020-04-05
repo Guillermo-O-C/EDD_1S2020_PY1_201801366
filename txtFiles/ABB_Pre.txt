@@ -6,5 +6,5 @@ digraph G {
   edge [arrowsize=0.8]
 0 -> 1;
 0[label="josue"];
-1[label="mario"];
+1[label="alejo"];
 }
