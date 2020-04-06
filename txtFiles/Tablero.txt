@@ -6,7 +6,7 @@ digraph G {
 X0 -> X2[dir=both, constraint=true];
 X0 -> C0F1[dir=both];
 X2 -> X4[dir=both, constraint=true];
-X2 -> C2F5[dir=both];
+X2 -> C2F1[dir=both];
 X4 -> X6[dir=both, constraint=true];
 X4 -> C4F10[dir=both];
 X6 -> X10[dir=both, constraint=true];
@@ -21,12 +21,22 @@ X10[group=12];
 
 {rank =same;root;X0;X2;X4;X6;X10}
 Y1 -> C0F1[dir=both, constraint=true];
-Y1 -> Y5[dir=both];
+Y1 -> Y2[dir=both];
+C0F1 -> C2F1[dir=both,constraint=true];
 C0F1 -> C0F15[dir=both];
+C2F1 -> C2F2[dir=both];
 Y1[group=1];
 C0F1[group=2];
+C2F1[group=4];
 
-{rank =same;Y1;C0F1}
+{rank =same;Y1;C0F1;C2F1}
+Y2 -> C2F2[dir=both, constraint=true];
+Y2 -> Y5[dir=both];
+C2F2 -> C2F5[dir=both];
+Y2[group=1];
+C2F2[group=4];
+
+{rank =same;Y2;C2F2}
 Y5 -> C2F5[dir=both, constraint=true];
 Y5 -> Y10[dir=both];
 Y5[group=1];
@@ -55,6 +65,9 @@ X6[label="6"];
 X10[label="10"];
 Y1[label="1"];
 C0F1[label=" "];
+C2F1[label="D"];
+Y2[label="2"];
+C2F2[label="A"];
 Y5[label="5"];
 C2F5[label=" "];
 Y10[label="10"];

@@ -905,7 +905,7 @@ void OrdenarJugadores(ListaSimple<jugadores> *lista, jugadores jugador){
 		//		cout<<to_string(jugador.getScores()->GetCabeza()->getValue())<<" se debe ingresar después de "<<to_string(aux->getValue().getScores()->GetCabeza()->getValue())<<endl;
 				lista->Insertar(jugador);
 			}else{	
-				cout<<to_string(jugador.getScores()->GetCabeza()->getValue())<<", se debe ingresar antes de "<<to_string(aux->getValue().getScores()->GetCabeza()->getValue())<<endl;
+			//	cout<<to_string(jugador.getScores()->GetCabeza()->getValue())<<", se debe ingresar antes de "<<to_string(aux->getValue().getScores()->GetCabeza()->getValue())<<endl;
 				lista->InsertBefore(jugador, i);
 			}
 		}else{			
